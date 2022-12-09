@@ -24,7 +24,7 @@
 <meta property="og:description" content="&lt;8kyu&gt; Opposites Attract题目描述： Timmy &amp; Sarah think they are in love, but around where they live, they will only know once they pick a flower each. If one of the flowers has an even number of">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-17T11:24:42.000Z">
-<meta property="article:modified_time" content="2022-11-17T13:32:48.323Z">
+<meta property="article:modified_time" content="2022-12-09T14:55:01.884Z">
 <meta property="article:author" content="OSLike">
 <meta property="article:tag" content="Codewars">
 <meta name="twitter:card" content="summary_large_image">
@@ -253,7 +253,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          455 字
+          1.7k 字
         
       </span>
     
@@ -264,7 +264,7 @@
         
         
         
-          4 分钟
+          13 分钟
         
       </span>
     
@@ -325,7 +325,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年11月17日 晚上
+                    本文最后更新于：2022年12月9日 晚上
                   
                 
               </p>
@@ -342,6 +342,24 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">lovefunc</span><span class="hljs-params">(<span class="hljs-type">int</span> f1, <span class="hljs-type">int</span> f2)</span> </span>&#123;<br>  <span class="hljs-keyword">return</span>(((f1%<span class="hljs-number">2</span>)&amp;&amp;!(f2%<span class="hljs-number">2</span>))|(!(f1%<span class="hljs-number">2</span>)&amp;&amp;(f2%<span class="hljs-number">2</span>))) ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>懒死我得了……</p>
+<h2 id="lt-7kyu-gt-String-ends-with"><a href="#lt-7kyu-gt-String-ends-with" class="headerlink" title="&lt;7kyu&gt; String ends with?"></a>&lt;7kyu&gt; String ends with?</h2><p>题目描述：</p>
+<p>Complete the solution so that it returns true if the first argument(string) passed in ends with the 2nd argument (also a string).</p>
+<p>基础小逻辑</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">solution</span><span class="hljs-params">(std::string <span class="hljs-type">const</span> &amp;str, std::string <span class="hljs-type">const</span> &amp;ending)</span> </span>&#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> len1 = str.<span class="hljs-built_in">length</span>(), len2 = ending.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>;i &lt;= len2; i++) &#123;<br>        <span class="hljs-keyword">if</span>(str[len1-i] != ending[len2-i]) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="lt-8kyu-gt-Convert-number-to-reversed-array-of-digits"><a href="#lt-8kyu-gt-Convert-number-to-reversed-array-of-digits" class="headerlink" title="&lt;8kyu&gt; Convert number to reversed array of digits"></a>&lt;8kyu&gt; Convert number to reversed array of digits</h2><p>题目描述：</p>
+<p>Convert number to reversed array of digits</p>
+<p>Given a random non-negative number, you have to return the digits of this number within an array in reverse order.</p>
+<p>就是一个小特判</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">std::vector&lt;<span class="hljs-type">int</span>&gt; <span class="hljs-title">digitize</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> n)</span> </span><br><span class="hljs-function"></span>&#123;   <br>    std::vector&lt;<span class="hljs-type">int</span>&gt; m;<br>    <span class="hljs-keyword">while</span>(n != <span class="hljs-number">0</span>) &#123;<br>        m.<span class="hljs-built_in">push_back</span>(n % <span class="hljs-number">10</span>);<br>        n /= <span class="hljs-number">10</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span>(m.<span class="hljs-built_in">size</span>()==<span class="hljs-number">0</span>) m.<span class="hljs-built_in">push_back</span>(<span class="hljs-number">0</span>);<br>    <span class="hljs-keyword">return</span> m;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="lt-7-kyu-gt-Find-the-stray-number"><a href="#lt-7-kyu-gt-Find-the-stray-number" class="headerlink" title="&lt;7 kyu&gt; Find the stray number"></a>&lt;7 kyu&gt; Find the stray number</h2><p>题目描述：</p>
+<p>You are given an <em>odd-length</em> array of integers, in which all of them are the same, except for one single number.</p>
+<p>Complete the method which accepts such an array, and returns that single different number.</p>
+<p><strong>The input array will always be valid!</strong> (odd-length &gt;&#x3D; 3)</p>
+<p>投机取巧</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;algorithm&gt;</span></span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">stray</span><span class="hljs-params">(std::vector&lt;<span class="hljs-type">int</span>&gt; numbers)</span> </span>&#123;<br>    <span class="hljs-built_in">sort</span>(numbers.<span class="hljs-built_in">begin</span>(), numbers.<span class="hljs-built_in">end</span>());<br>    <span class="hljs-keyword">if</span>(numbers[<span class="hljs-number">0</span>] != numbers[<span class="hljs-number">1</span>]) <span class="hljs-keyword">return</span> numbers[<span class="hljs-number">0</span>];<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> numbers[numbers.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>];<br>&#125;;<br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
