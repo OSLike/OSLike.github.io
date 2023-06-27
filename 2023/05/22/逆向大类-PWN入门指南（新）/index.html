@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/txbynq.jpg">
+  <link rel="icon" href="/img/txbynq.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="OSLike">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PWN入门指南0x01 pwn是什么 pwn：“Pwn”是一个黑客语法的俚语词 ，是指攻破设备或者系统 。发音类似 “砰”，对黑客而言，这 就是成功实施黑客攻击的声音——砰的一声，被“黑”的电脑 或手机就被你操纵。 CTF中PWN题型通常会直接给定一个已经编译好的二进制程序（Windows下的EXE 或者Linux下的 ELF文件等），然后参赛选手通过对二进制程序进行逆向分析和调 试来找到利用漏洞">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向大类-PWN入门指南（新）">
+<meta property="og:url" content="http://example.com/2023/05/22/%E9%80%86%E5%90%91%E5%A4%A7%E7%B1%BB-PWN%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%88%E6%96%B0%EF%BC%89/index.html">
+<meta property="og:site_name" content="OSLike&#39;s Blog">
+<meta property="og:description" content="PWN入门指南0x01 pwn是什么 pwn：“Pwn”是一个黑客语法的俚语词 ，是指攻破设备或者系统 。发音类似 “砰”，对黑客而言，这 就是成功实施黑客攻击的声音——砰的一声，被“黑”的电脑 或手机就被你操纵。 CTF中PWN题型通常会直接给定一个已经编译好的二进制程序（Windows下的EXE 或者Linux下的 ELF文件等），然后参赛选手通过对二进制程序进行逆向分析和调 试来找到利用漏洞">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-22T05:26:20.000Z">
+<meta property="article:modified_time" content="2023-05-22T14:34:54.000Z">
+<meta property="article:author" content="OSLike">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>逆向大类-PWN入门指南（新） - OSLike&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"rTccdNadc9XbepHsHq0yeMEk-gzGzoHsz","app_key":"XSYHRE8TrMTHTcH1w137uSk9","server_url":"https://rtccdnad.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>OSLike</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="逆向大类-PWN入门指南（新）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        OSLike
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-22 13:26" pubdate>
+          2023年5月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">逆向大类-PWN入门指南（新）</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年5月22日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PWN入门指南"><a href="#PWN入门指南" class="headerlink" title="PWN入门指南"></a>PWN入门指南</h1><h2 id="0x01-pwn是什么"><a href="#0x01-pwn是什么" class="headerlink" title="0x01 pwn是什么"></a>0x01 pwn是什么</h2><ol>
+<li>pwn：“Pwn”是一个黑客语法的俚语词 ，是指攻破设备或者系统 。发音类似 “砰”，对黑客而言，这<br> 就是成功实施黑客攻击的声音——砰的一声，被“黑”的电脑 或手机就被你操纵。</li>
+<li>CTF中PWN题型通常会直接给定一个已经编译好的二进制程序（Windows下的EXE 或者Linux下的<br> ELF文件等），然后参赛选手通过对二进制程序进行逆向分析和调 试来找到利用漏洞，并编写利用<br> 代码，通过远程代码执行来达到溢出攻击的效果， 最终拿到目标机器的shell夺取flag。</li>
+<li>二进制逆向可以概括为 从目标代码反推到源代码，再通过源代码去理解该文件的 实现的功能和创<br> 作的意义，这项技术在实战中常应用的领域为 软件破解、漏洞挖掘、恶意木马的分析。</li>
+<li>对于Pwn选手来说，未来会更容易接触到KOH赛题，也更考验人们对于代码审计的能力以及对于各种关于底层漏洞知识的掌握。</li>
+</ol>
+<h2 id="0x02-基础知识"><a href="#0x02-基础知识" class="headerlink" title="0x02 基础知识"></a>0x02 基础知识</h2><h3 id="1-C语言"><a href="#1-C语言" class="headerlink" title="1.C语言"></a>1.C语言</h3><p><strong>零基础的同学，从C语言的学习开始</strong><br>视频推荐：<a target="_blank" rel="noopener" href="https://www.icourse163.org/course/ZJU-199001">中国大学mooc：翁恺教授-C语言入门</a><br>练习平台：<a target="_blank" rel="noopener" href="https://pintia.cn/">PTA | 程序设计类实验辅助教学平台</a>、<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/">首页 - 洛谷 | 计算机科学教育新生态</a><br>在之后，学有余力的同学，可以学习简单的数据结构和算法</p>
+<h3 id="2-汇编语言"><a href="#2-汇编语言" class="headerlink" title="2.汇编语言"></a>2.汇编语言</h3><p><strong>推荐：王爽《汇编语言》</strong><br><strong>最后的目的是能看懂汇编代码，不用实现手搓汇编程序</strong><br>早期学习中的目标：<strong>了解</strong>以下指令的作用 , 寄存器的作用 , 寻址方式（此处为x86指令集部分指令，未来会出现更多的指令集）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs assembly">mov<br>add<br>sub<br>inc<br>dec<br>lea<br>cmp<br>test<br>je<br>jne<br>jmp<br>call<br>push<br>pop<br>and<br>or<br>xor<br></code></pre></td></tr></table></figure>
+<h3 id="3-python基础"><a href="#3-python基础" class="headerlink" title="3.python基础"></a>3.python基础</h3><p>在C语言基础扎实的情况下，python是很容易入门的<br>在做pwn题的时候，是通过python脚本与程序和工具进行关联，所以需要学习python<br>python包括python2 和 python3 ，学习中注意python2和python3的诸多区别，尤其是python3中str<br>类型与bytes类型的区分与转换</p>
+<p>（但现在更多师傅在做题时会选用Python3，Python2.7环境是每个Ubuntu标准环境中自带的，也同时兼容一些仅低版本的工具的使用。推荐版本 3.7.* 3.8.*）</p>
+<h3 id="4-linux基础"><a href="#4-linux基础" class="headerlink" title="4.linux基础"></a>4.linux基础</h3><p><strong>目的是能够运用基本的shell命令</strong><br>简单的linux命令行的使用<br>pwn的很多工具是只有linux版本的，所以需要简单的学习</p>
+<p>（注：不是特别建议直接将本机系统换为类Linux，双系统可行）</p>
+<h2 id="0x03-大致路线-amp-资料"><a href="#0x03-大致路线-amp-资料" class="headerlink" title="0x03 大致路线&amp;资料"></a>0x03 大致路线&amp;资料</h2><p><strong>刷题平台推荐：</strong><a target="_blank" rel="noopener" href="https://nssctf.cn/">NSSCTF</a>、<a target="_blank" rel="noopener" href="https://adworld.xctf.org.cn/">攻防世界</a>、<a target="_blank" rel="noopener" href="https://buuoj.cn/">BuuCTF</a>、<a target="_blank" rel="noopener" href="https://pwnhub.cn/">PWNHUB</a>、<a target="_blank" rel="noopener" href="https://ctf.show/">CTFShow</a>、<a target="_blank" rel="noopener" href="https://pwnable.tw/">Pwnable(TW)</a>、<a target="_blank" rel="noopener" href="https://pwnable.kr/">Pwnable(KR)</a>、<a target="_blank" rel="noopener" href="https://pwn.college/">PwnCollege</a> （排名不分先后，以个人对本方向做题体验排序）<br><strong>学习资料：</strong><a target="_blank" rel="noopener" href="https://ctf-wiki.org/">CTF-wiki文字资料</a>、<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Uv411j7fr?vd_source=704b83ee478726f09f748dc03c2257ae">星盟安全PWN全集视频资料</a><br><strong>比赛查询：</strong><a target="_blank" rel="noopener" href="https://su-sanha.cn/">三哈</a><br><strong>安全平台：</strong>看雪、FreeBuf、安全客、先知、吾爱破解<br><strong>相关书籍推荐：</strong>《有趣的二进制》《深入理解计算机系统》 《程序员的自我修养》 《0day漏洞挖掘与<br>利用》</p>
+<p>由于本方向相对其他方向资源偏少，更需要个人的思考、调试的熟练程度，以及对于资料的找寻能力</p>
+<h3 id="1-栈"><a href="#1-栈" class="headerlink" title="1.栈"></a><strong>1.栈</strong></h3><p><strong>基本ROP：ret2text , ret2shellcode , ret2syscall, ret2libc</strong><br>这些学习完，就可以在ctf平台上开始刷题练手了</p>
+<p><strong>ctfwiki中其他构造ROP的技巧：ret2csu, ret2reg等等</strong><br>之后的ret2dl_resolve等技巧有难度，可以暂放</p>
+<h3 id="2-格式化字符串漏洞"><a href="#2-格式化字符串漏洞" class="headerlink" title="2.格式化字符串漏洞"></a><strong>2.格式化字符串漏洞</strong></h3><p>学习如何利用漏洞实现 泄露内存 和 覆盖内存<br>包括泄露栈上内容，泄露BSS段上内容等等</p>
+<h3 id="3-堆"><a href="#3-堆" class="headerlink" title="3.堆"></a><strong>3.堆</strong></h3><p>在学习堆之前，先熟悉数据结构<strong>“链表”</strong>，包括单向链表，双向循环链表等等<br><strong>推荐学习顺序：UAF –&gt; Fastbin Attack –&gt; Unlink –&gt; ……</strong></p>
+<h2 id="附-环境搭建-amp-工具安装"><a href="#附-环境搭建-amp-工具安装" class="headerlink" title="附:环境搭建&amp;工具安装"></a>附:环境搭建&amp;工具安装</h2><h3 id="1-linux系统安装"><a href="#1-linux系统安装" class="headerlink" title="1.linux系统安装"></a>1.linux系统安装</h3><p>通过虚拟机 如:<strong>VMware</strong>实现 (也可以双系统，开心就好)<br>再于虚拟机中搭建linux系统：最好为Ubuntu<br>初期所接触的ctf-pwn题,多为libc2.23, 所以前期至少需要安装ubuntu16的系统</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">ubuntu16</span><span class="hljs-params">(glibc2.<span class="hljs-number">23</span>)</span></span><br><span class="hljs-function"><span class="hljs-title">ubuntu18</span><span class="hljs-params">(glibc2.<span class="hljs-number">27</span>_ &lt;=<span class="hljs-number">1.2</span>)</span></span><br><span class="hljs-function"><span class="hljs-title">ubuntu18</span><span class="hljs-params">(glibc2.<span class="hljs-number">27</span>_ &gt;=<span class="hljs-number">1.3</span>)</span></span><br><span class="hljs-function"><span class="hljs-title">ubuntu20</span><span class="hljs-params">(glibc2.<span class="hljs-number">31</span>)</span></span><br><span class="hljs-function"><span class="hljs-title">ubuntu22</span><span class="hljs-params">(glibc2.<span class="hljs-number">34</span>)</span></span><br></code></pre></td></tr></table></figure>
+<p>但由于后续某些工具也在同步更新，导致ubuntu16可能不能很好地安装这些工具，所以此处我们更推荐使用Ubutnu20.04</p>
+<h3 id="2-Ubuntu20-04以及python2环境下进行安装"><a href="#2-Ubuntu20-04以及python2环境下进行安装" class="headerlink" title="2.Ubuntu20.04以及python2环境下进行安装"></a>2.Ubuntu20.04以及python2环境下进行安装</h3><p>(注：如果是ubuntu18及以上版本最好且应该采用Pyhton3的安装方式，如未注明Python2&#x2F;3，则更希望读者采取Python3的方法；如果希望使用Python2版本的安装也可以在GitHub上找到某些特定的低版本，但所有的Python2版本我们都是不建议的)</p>
+<h4 id="0-IDA"><a href="#0-IDA" class="headerlink" title="0. IDA"></a>0. IDA</h4><p>用于逆向程序，呈现出可以阅读的汇编代码<br>(在windows下安装，群里有资源；在linux下可以使用wine或去官网下载ida free（不建议），或直接使用ghidra，不建议使用cutter)</p>
+<h4 id="1-ubuntu20-04"><a href="#1-ubuntu20-04" class="headerlink" title="1. ubuntu20.04"></a>1. ubuntu20.04</h4><p>虚拟机安装，VMware Workstation Pro+ ubuntu20.04的iso文件<br>vmtools安装：<a target="_blank" rel="noopener" href="https://blog.csdn.net/adminkeys/article/details/107914813">https://blog.csdn.net/adminkeys/article/details/107914813</a></p>
+<h4 id="2-apt更新："><a href="#2-apt更新：" class="headerlink" title="2. apt更新："></a>2. apt更新：</h4><p>在本处往后内容都需要在命令行中</p>
+<p>由于国外源相对较慢，推荐上网搜索您使用的Ubuntu版本换源，然后根据教程操作后进行如下操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt update<br><span class="hljs-comment"># sudo apt upgrade</span><br><span class="hljs-comment"># upgrade可选，为本地所有已安装包体的更新</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-python2-7"><a href="#3-python2-7" class="headerlink" title="3. python2.7:"></a>3. python2.7:</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#非必要</span><br>sudo apt install python2.7 python-pip python-dev git libssl-dev libffi-dev build-essential<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="4-pip"><a href="#4-pip" class="headerlink" title="4. pip:"></a>4. pip:</h4><p>用于快捷的安装其他软件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#不直接用apt进行更新，python2会崩，但不建议</span><br>sudo apt install wget<br>wget https://bootstrap.pypa.io/pip/2.7/get-pip.py<br>sudo python2 ./get-pip.py<br><span class="hljs-comment">#或</span><br>sudo apt install python-pip<br><br><span class="hljs-comment">#python3安装</span><br>sudo apt install python3-pip<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="5-git-gdb-gdb-mutiarch"><a href="#5-git-gdb-gdb-mutiarch" class="headerlink" title="5. git, gdb, gdb-mutiarch"></a>5. git, gdb, gdb-mutiarch</h4><p>git用于克隆代码托管他人项目<br>gdb用于调试程序<br>gdb-mutiarch在之后用于arm架构的调试（但可能更常搭配qemu使用）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install git gdb<br><span class="hljs-comment"># 非必要</span><br><span class="hljs-comment"># sudo apt-get install gdb-multiarch</span><br><span class="hljs-comment"># sudo apt-get install &quot;binfmt*&quot;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="6-pwndbg-gdb的插件"><a href="#6-pwndbg-gdb的插件" class="headerlink" title="6. pwndbg(gdb的插件)"></a>6. pwndbg(gdb的插件)</h4><p>因为gdb对于pwn题的调试不便，所以需要通过功能更适合的插件pwndbg进行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> https://github.com/pwndbg/pwndbg<br><span class="hljs-built_in">cd</span> pwndbg<br>gedit ./setup.sh<br><span class="hljs-comment">#注释掉这一行：$&#123;PYTHON&#125; -m pip install $&#123;INSTALLFLAGS&#125; --upgrade pip</span><br>./setup.sh<br><span class="hljs-comment">#如果第一遍安装有对于capstone的报错，则</span><br>gedit requirements.txr<br><span class="hljs-comment">#将capstone==4.0.1修改为capstone==5.0.0</span><br><span class="hljs-comment">#最好多执行几次，并且保证网络环境通畅，没有任何报错即可停止，如后续使用工具出现问题重新执行本操作</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="7-pwntools"><a href="#7-pwntools" class="headerlink" title="7. pwntools"></a>7. pwntools</h4><p>python pypi的一个库，集合了一整套pwn工具集，涵盖了pwn题利用脚本所需要的各种工具。包括方便<br>的IO交互函数，ROP、格式化字符串等利用的自动化工具，shellcode生成器等等。<br>pwntools是目前最好用也是仅有的大型pwn利用框架。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#python2.7 不建议</span><br>sudo pip install setuptools==44.0<br>sudo pip install MarkupSafe==0.9.2<br>sudo pip install cryptography==2.5<br>sudo pip install configparser==3.5<br>sudo pip install zipp==0.5<br>sudo pip install importlib-metadata==0.12<br>sudo pip install importlib-resources==1.0<br>sudo pip install pwntools==4<br><br><span class="hljs-comment">#python3安装</span><br>pip install pwntools<br><br><span class="hljs-comment">#Python2.7也可以pip install pwntools，不过同时需要pip install pathlib2</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="8-ROPgadget-pwntools的一个组件"><a href="#8-ROPgadget-pwntools的一个组件" class="headerlink" title="8. ROPgadget(pwntools的一个组件)"></a>8. ROPgadget(pwntools的一个组件)</h4><p>在栈溢出的基础上，可以利用程序中已有的小片段(gadgets)改变某些寄存器或者变量的值，便于控<br>制程序的执行流<br>而ROPgadget可以实现方便地查找好用的gadgets</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#校验是否安装成功</span><br>ROPgadget -v<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="9-LibcSearcher"><a href="#9-LibcSearcher" class="headerlink" title="9. LibcSearcher"></a>9. LibcSearcher</h4><p>用于解决pwn题中不明libc版本的问题，可以根据泄露的某函数地址,推测服务端使用的libc版本</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#python2 不建议</span><br>git <span class="hljs-built_in">clone</span> https://github.com/wjhwjhn/LibcSearcher.git<br><span class="hljs-built_in">cd</span> LibcSearcher<br>python2 setup.py develop<br><span class="hljs-comment">#python3安装</span><br>pip3 install LibcSearcher<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="10-one-gadget"><a href="#10-one-gadget" class="headerlink" title="10. one_gadget"></a>10. one_gadget</h4><p>由于在ubuntu16.04下安装ruby默认且最高版本为2.3，需要高版本ruby才能安装本工具，可参考如下文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/henryhu712/article/details/89224467">https://blog.csdn.net/henryhu712/article/details/89224467</a><br>在高版本ubuntu中可以直接安装（Ruby&gt;&#x3D;2.4.0）</p>
+<p>由于是国外源，并且gem下载没有提示，多等待一会就好了，下同</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install ruby<br>sudo gem install one_gadget<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="11-seccomp-tools"><a href="#11-seccomp-tools" class="headerlink" title="11. seccomp_tools"></a>11. seccomp_tools</h4><p>检查sanbox保护用的工具（Ruby&gt;&#x3D;2.4.0）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo gem install seccomp-tools<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="12-patchelf"><a href="#12-patchelf" class="headerlink" title="12. patchelf"></a>12. patchelf</h4><p>修改ELF文件的动态链接库以及链接脚本文件，常配合glibc-all-in-one使用，大多数情况下直接apt下载即可，部分情况需要从源码自行编译构建（注：在Ubuntu18下patchelf会使链接后的文件失效，故不建议在Ubuntu18上使用）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt install patchelf<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="13-pwngdb"><a href="#13-pwngdb" class="headerlink" title="13. pwngdb"></a>13. pwngdb</h4><p>在后续堆题的学习中会大大提升学习效率，但由于会影响pwndbg canary指令，所以建议进行后续学习时再进行下载</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> https://github.com/scwuaptx/Pwngdb.git <br><span class="hljs-built_in">cp</span> ./Pwndbg/.gdbinit ./<br><span class="hljs-comment">#因为你使用的时pwndbg，所以还需如下操作</span><br>gedit .gdbinit<br><span class="hljs-comment">#将第一行 source ~/peda/peda.py 用 # 注释掉或直接删掉</span><br><span class="hljs-comment">#然后添加上如下一行，在第一行</span><br><span class="hljs-built_in">source</span> ~/pwndbg/gdbinit.py<br></code></pre></td></tr></table></figure>
+
+<p>理论上做完这些操作<code>.gdbinit</code>文件中应该是这样的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#source ~/peda/peda.py</span><br><span class="hljs-built_in">source</span> ~/pwndbg/gdbinit.py<br><span class="hljs-built_in">source</span> ~/Pwngdb/pwngdb.py<br><span class="hljs-built_in">source</span> ~/Pwngdb/angelheap/gdbinit.py<br><br>define hook-run<br>python<br>import angelheap<br>angelheap.init_angelheap()<br>end<br>end<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>逆向大类-PWN入门指南（新）</div>
+      <div>http://example.com/2023/05/22/逆向大类-PWN入门指南（新）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>OSLike</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/05/28/Arch-Linux-DDE/" title="Arch-Linux-DDE">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Arch-Linux-DDE</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/11/%E4%BB%A5%E5%BC%80%E5%8F%91%E4%B8%BA%E4%B8%BB%E5%B9%B6%E6%8F%90%E5%8F%8A%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="以开发为主并提及内存管理">
+                        <span class="hidden-mobile">以开发为主并提及内存管理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>OSLike</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>WEplayerscsc</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人      
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
