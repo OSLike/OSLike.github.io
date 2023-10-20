@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
 <meta property="article:published_time" content="2022-11-04T07:55:05.000Z">
-<meta property="article:modified_time" content="2023-03-10T12:46:48.000Z">
+<meta property="article:modified_time" content="2023-10-20T05:05:57.145Z">
 <meta property="article:author" content="OSLike">
 <meta property="article:tag" content="knowledge">
 <meta property="article:tag" content="pwn">
@@ -257,7 +257,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          11k 字
+          12k 字
         
       </span>
     
@@ -268,7 +268,7 @@
         
         
         
-          81 分钟
+          88 分钟
         
       </span>
     
@@ -329,7 +329,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年3月10日 晚上
+                    本文最后更新于：2023年10月20日 下午
                   
                 
               </p>
@@ -840,6 +840,12 @@
 <p><code>payload = &#39;a&#39;*112 + p32(gets_plt) + p32(system_plt) + p32(buf2) + p32(buf2)</code></p>
 <p>若使用read函数，其payload可以写为</p>
 <p><code>payload = flat([&#39;a&#39;*112, read_plt, system_plt, 0x00, buf2, 0x100, buf2])</code></p>
+<h2 id="patchelf"><a href="#patchelf" class="headerlink" title="patchelf"></a>patchelf</h2><p><code>patchelf --set-interpreter ./glibc-all-in-one-master/libs/2.31-0ubuntu9.2_amd64/ld-2.31.so --set-rpath ./glibc-all-in-one-master/libs/2.31-0ubuntu9.2_amd64 target_file</code></p>
+<p><code>patchelf --set-interpreter ./glibc-all-in-one-master/libs/2.31-0ubuntu9.2_amd64/ld-2.31.so --replace-needed libc.so.6 ./glibc-all-in-one-master/libs/2.31-0ubuntu9.2_amd64/libc.so.6 target_file</code></p>
+<p><code>sudo ln ld-2.26.so /lib64/ld-2.26.so #然后设置解释器和libc，这样就能进行debug #设置解释器 patchelf --set-interpreter /lib64/ld-2.26.so ./gundam #设置libc patchelf --replace-needed libc.so.6 ~/2.26-0ubuntu2_amd64/libc-2.26.so ./gundam</code></p>
+<p><code>p = process([&#39;/home/xuehuzhou/2.27-3ubuntu1_amd64/ld-2.27.so&#39;, &#39;./gundam&#39;], env=&#123;&quot;LD_PRELOAD&quot;:&#39;/home/xuehuzhou/2.27-3ubuntu1_amd64/libc.so.6&#39;&#125;)</code></p>
+<p><code>cp -r ~/ctf2021/tools/glibc-all-in-one/libs/2.27-3ubuntu1_amd64/.debug/ ./debug</code></p>
+<p><code>set debug-file-directory debug/</code></p>
 
                 
               </div>
