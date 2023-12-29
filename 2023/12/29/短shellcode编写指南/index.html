@@ -16,26 +16,21 @@
   <meta name="author" content="OSLike">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本题出自2014 hack.lu。基于GLIBC 2.23-0ubuntu11.3。 checksec 12345Arch:     i386-32-littleRELRO:    No RELROStack:    Canary foundNX:       NX enabledPIE:      No PIE (0x8048000)  主逻辑函数 12345678910111213141516">
+    <meta name="description" content="本文shellcode完全代表amd64&#x2F;intel&#x2F;little endian的汇编指令。 shellcode不过就是一段+x的string。 xor还是mov？eax还是rax？xor rax, rax对应的16进制字符为\x48\x31\xc0，mov rax, 0对应的16进制字符为\x48\xc7\xc0\x00\x00\x00\x00，mov eax, 0对应的16">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oreo-house of spirit">
-<meta property="og:url" content="http://example.com/2023/12/22/oreo-house-of-spirit/index.html">
+<meta property="og:title" content="短shellcode编写指南">
+<meta property="og:url" content="http://example.com/2023/12/29/%E7%9F%ADshellcode%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/index.html">
 <meta property="og:site_name" content="OSLike&#39;s Blog">
-<meta property="og:description" content="本题出自2014 hack.lu。基于GLIBC 2.23-0ubuntu11.3。 checksec 12345Arch:     i386-32-littleRELRO:    No RELROStack:    Canary foundNX:       NX enabledPIE:      No PIE (0x8048000)  主逻辑函数 12345678910111213141516">
+<meta property="og:description" content="本文shellcode完全代表amd64&#x2F;intel&#x2F;little endian的汇编指令。 shellcode不过就是一段+x的string。 xor还是mov？eax还是rax？xor rax, rax对应的16进制字符为\x48\x31\xc0，mov rax, 0对应的16进制字符为\x48\xc7\xc0\x00\x00\x00\x00，mov eax, 0对应的16">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
-<meta property="article:published_time" content="2023-12-22T07:38:50.000Z">
-<meta property="article:modified_time" content="2023-12-22T15:01:02.940Z">
+<meta property="article:published_time" content="2023-12-29T08:56:23.000Z">
+<meta property="article:modified_time" content="2023-12-29T09:28:28.904Z">
 <meta property="article:author" content="OSLike">
-<meta property="article:tag" content="knowledge">
-<meta property="article:tag" content="pwn">
-<meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
   
   
   
-  <title>oreo-house of spirit - OSLike&#39;s Blog</title>
+  <title>短shellcode编写指南 - OSLike&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -223,13 +218,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://wllm1013.github.io/img/08067.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="oreo-house of spirit"></span>
+            <span id="subtitle" data-typed-text="短shellcode编写指南"></span>
           
         </div>
 
@@ -245,8 +240,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-22 15:38" pubdate>
-          2023年12月22日 下午
+        <time datetime="2023-12-29 16:56" pubdate>
+          2023年12月29日 下午
         </time>
       </span>
     
@@ -257,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          602 字
         
       </span>
     
@@ -268,7 +263,7 @@
         
         
         
-          20 分钟
+          5 分钟
         
       </span>
     
@@ -324,12 +319,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">oreo-house of spirit</h1>
+            <h1 style="display: none">短shellcode编写指南</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年12月22日 晚上
+                    本文最后更新于：2023年12月29日 下午
                   
                 
               </p>
@@ -337,34 +332,13 @@
             
               <div class="markdown-body">
                 
-                <p>本题出自2014 hack.lu。基于GLIBC 2.23-0ubuntu11.3。</p>
-<p>checksec</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">Arch:     i386-32-little<br>RELRO:    No RELRO<br>Stack:    Canary found<br>NX:       NX enabled<br>PIE:      No PIE (0x8048000)<br></code></pre></td></tr></table></figure>
-
-<p>主逻辑函数</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> __cdecl _main()<br>&#123;<br>  <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;What would you like to do?\n&quot;</span>);<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%u. Add new rifle\n&quot;</span>, <span class="hljs-number">1</span>);<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%u. Show added rifles\n&quot;</span>, <span class="hljs-number">2</span>);<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%u. Order selected rifles\n&quot;</span>, <span class="hljs-number">3</span>);<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%u. Leave a Message with your Order\n&quot;</span>, <span class="hljs-number">4</span>);<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%u. Show current stats\n&quot;</span>, <span class="hljs-number">5</span>);<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%u. Exit!\n&quot;</span>, <span class="hljs-number">6</span>);<br>  <span class="hljs-keyword">while</span> ( <span class="hljs-number">1</span> )<br>  &#123;<br>    <span class="hljs-keyword">switch</span> ( input() )<br>    &#123;<br>      <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:<br>        add();<br>        <span class="hljs-keyword">break</span>;<br>      <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:<br>        show_all();<br>        <span class="hljs-keyword">break</span>;<br>      <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:<br>        free_all();<br>        <span class="hljs-keyword">break</span>;<br>      <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:<br>        edit();<br>        <span class="hljs-keyword">break</span>;<br>      <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:<br>        show_cur();<br>        <span class="hljs-keyword">break</span>;<br>      <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:<br>        <span class="hljs-keyword">return</span>;<br>      <span class="hljs-keyword">default</span>:<br>        <span class="hljs-keyword">continue</span>;<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>经过一定的分析，可以很简单地发现某个指针_DOWRD大小数据是一个结构体，简单分析后发现</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">chunk</span></span><br><span class="hljs-class">&#123;</span><br>  <span class="hljs-type">char</span> rifle_descript[<span class="hljs-number">25</span>];<br>  <span class="hljs-type">char</span> rifle_name[<span class="hljs-number">27</span>];<br>  chunk *chunk_ptr;<br>&#125;;<br></code></pre></td></tr></table></figure>
-
-<p>大概是这样的。</p>
-<p>（我去我才发现idapro7.7可以自己对这个部分进行分析，idafree8.3没有，离谱好吧，并且函数名和结构体变量名都给标出来了，我也不知道是不是idafree为了减轻远端服务器压力而刻意不去分析或者不去找到，算了差不多，就这样吧）</p>
-<p>1、add</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> __cdecl <span class="hljs-title function_">add</span><span class="hljs-params">()</span><br>&#123;<br>  chunk *v0; <span class="hljs-comment">// [esp+18h] [ebp-10h]</span><br><br>  v0 = chunk;<br>  chunk = (chunk *)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">56</span>);<br>  <span class="hljs-keyword">if</span> ( chunk )<br>  &#123;<br>    chunk-&gt;malloc_p = v0;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Rifle name: &quot;</span>);<br>    fgets(chunk-&gt;rifle_name, <span class="hljs-number">56</span>, <span class="hljs-built_in">stdin</span>);<br>    check_end_0(chunk-&gt;rifle_name);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Rifle description: &quot;</span>);<br>    fgets(chunk, <span class="hljs-number">56</span>, <span class="hljs-built_in">stdin</span>);<br>    check_end_0(chunk-&gt;rifle_descript);<br>    ++chunk_num;<br>  &#125;<br>  <span class="hljs-keyword">else</span><br>  &#123;<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;Something terrible happened!&quot;</span>);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>分析add函数，发现在输入时没有严格控制输入大小，都可以对不同的区域进行输入，并且都可以溢出到chunk_ptr部分。add没有对malloc多少次做限制，也就是一直malloc可以到很高的地址直到把mmap占满。</p>
-<p>2、show</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> __cdecl <span class="hljs-title function_">show_all</span><span class="hljs-params">()</span><br>&#123;<br>  chunk *i; <span class="hljs-comment">// [esp+14h] [ebp-14h]</span><br><br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Rifle to be ordered:\n%s\n&quot;</span>, <span class="hljs-string">&quot;===================================&quot;</span>);<br>  <span class="hljs-keyword">for</span> ( i = chunk; i; i = i-&gt;chunk_ptr )<br>  &#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Name: %s\n&quot;</span>, i-&gt;rifle_name);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Description: %s\n&quot;</span>, i-&gt;rifle_descript);<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;===================================&quot;</span>);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>可以看到这里chunk结构体通过malloc_p成为了一个链表结构，show函数从这个链表头部开始通过malloc_p来逐个输出内容，但是由于前面add的未严格控制输入，那么就可以造成类似的任意读，那么就可以通过这个函数来泄露地址等操作。</p>
-<p>3、free</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> __cdecl <span class="hljs-title function_">free_all</span><span class="hljs-params">()</span><br>&#123;<br>  chunk *v0; <span class="hljs-comment">// [esp+14h] [ebp-14h]</span><br>  chunk *v1; <span class="hljs-comment">// [esp+18h] [ebp-10h]</span><br><br>  v0 = chunk;<br>  <span class="hljs-keyword">if</span> ( chunk_num )<br>  &#123;<br>    <span class="hljs-keyword">while</span> ( v0 )<br>    &#123;<br>      v1 = v0;<br>      v0 = v0-&gt;malloc_p;<br>      <span class="hljs-built_in">free</span>(v1);<br>    &#125;<br>    chunk = <span class="hljs-number">0</span>;<br>    ++free_num;<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;Okay order submitted!&quot;</span>);<br>  &#125;<br>  <span class="hljs-keyword">else</span><br>  &#123;<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;No rifles to be ordered!&quot;</span>);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>全给清空了，有点狠，并且置空了，不能自由free而是整个链表都被free。</p>
-<p>4、edit</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> __cdecl <span class="hljs-title function_">edit</span><span class="hljs-params">()</span><br>&#123;<br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Enter any notice you&#x27;d like to submit with your order: &quot;</span>);<br>  fgets(dword_804A2A8, <span class="hljs-number">128</span>, <span class="hljs-built_in">stdin</span>);<br>  check_end_0(dword_804A2A8);<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>对某个字符串进行输入感觉没什么特殊的地方。</p>
+                <p>本文shellcode完全代表amd64&#x2F;intel&#x2F;little endian的汇编指令。</p>
+<p><em>shellcode不过就是一段+x的string。</em></p>
+<h2 id="xor还是mov？eax还是rax？"><a href="#xor还是mov？eax还是rax？" class="headerlink" title="xor还是mov？eax还是rax？"></a>xor还是mov？eax还是rax？</h2><p><code>xor rax, rax</code>对应的16进制字符为<code>\x48\x31\xc0</code>，<code>mov rax, 0</code>对应的16进制字符为<code>\x48\xc7\xc0\x00\x00\x00\x00</code>，<code>mov eax, 0</code>对应的16进制字符为<code>\xb8\x00\x00\x00\x00</code>，<code>xor eax, eax</code>对应的16进制字符为<code>\x31\xc0</code>。</p>
+<p><code>mov al, 0</code>和<code>mov ah, 0</code>是不能置空寄存器的。</p>
+<p>可以看到其中最短的是<code>xor eax, eax</code>，该条指令的效果也成功地将rax寄存器置空；最长的是<code>mov rax, 0</code>；并且每种置空方法，xor都要比直接mov为0更短，原因在于数字需要在命令中完全地表示；使用eax的都要比使用rax的要更短，原因在于amd64的设计理念基于x86，rax类似于取了一个QWORD eax，占用字节更大自然就会导致使用字节数更多。</p>
+<p>但是需要注意，当rsp对应位置的值为0时，使用<code>pop rax</code>是最短的，对应的16进制为<code>\x58</code>。</p>
+<h2 id="mov"><a href="#mov" class="headerlink" title="mov"></a>mov</h2><p>首先我们应该知道mov是汇编里的助记符，而不是二进制里真正的opcode域，不同语境下的mov（如寄存器之间数据传输方向不同）采用的操作码数值也不同，详细可查询intel得指令手册（可以在intel官网下载）。</p>
 
                 
               </div>
@@ -373,38 +347,6 @@
             <div>
               <div class="post-metas my-3">
   
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/CTFPWN/" class="category-chain-item">CTFPWN</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/knowledge/">#knowledge</a>
-      
-        <a href="/tags/pwn/">#pwn</a>
-      
-        <a href="/tags/CTF/">#CTF</a>
-      
-    </div>
   
 </div>
 
@@ -414,8 +356,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>oreo-house of spirit</div>
-      <div>http://example.com/2023/12/22/oreo-house-of-spirit/</div>
+      <div>短shellcode编写指南</div>
+      <div>http://example.com/2023/12/29/短shellcode编写指南/</div>
     </div>
     <div class="license-meta">
       
@@ -427,7 +369,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月22日</div>
+          <div>2023年12月29日</div>
         </div>
       
       
@@ -459,18 +401,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/12/29/%E7%9F%ADshellcode%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/" title="短shellcode编写指南">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">短shellcode编写指南</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/12/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%EF%BC%8C%E4%BD%86%E6%98%AF%E6%88%90%E4%B8%BA%E5%86%85%E6%A0%B8%E2%9C%8C%F0%9F%8F%BB%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5/" title="操作系统，但是成为内核✌🏻的第一步">
-                        <span class="hidden-mobile">操作系统，但是成为内核✌🏻的第一步</span>
+                      <a href="/2023/12/22/oreo-house-of-spirit/" title="oreo-house of spirit">
+                        <span class="hidden-mobile">oreo-house of spirit</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

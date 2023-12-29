@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>短shellcode编写指南</title>
+    <link href="/2023/12/29/%E7%9F%ADshellcode%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/"/>
+    <url>/2023/12/29/%E7%9F%ADshellcode%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/</url>
+    
+    <content type="html"><![CDATA[<p>本文shellcode完全代表amd64&#x2F;intel&#x2F;little endian的汇编指令。</p><p><em>shellcode不过就是一段+x的string。</em></p><h2 id="xor还是mov？eax还是rax？"><a href="#xor还是mov？eax还是rax？" class="headerlink" title="xor还是mov？eax还是rax？"></a>xor还是mov？eax还是rax？</h2><p><code>xor rax, rax</code>对应的16进制字符为<code>\x48\x31\xc0</code>，<code>mov rax, 0</code>对应的16进制字符为<code>\x48\xc7\xc0\x00\x00\x00\x00</code>，<code>mov eax, 0</code>对应的16进制字符为<code>\xb8\x00\x00\x00\x00</code>，<code>xor eax, eax</code>对应的16进制字符为<code>\x31\xc0</code>。</p><p><code>mov al, 0</code>和<code>mov ah, 0</code>是不能置空寄存器的。</p><p>可以看到其中最短的是<code>xor eax, eax</code>，该条指令的效果也成功地将rax寄存器置空；最长的是<code>mov rax, 0</code>；并且每种置空方法，xor都要比直接mov为0更短，原因在于数字需要在命令中完全地表示；使用eax的都要比使用rax的要更短，原因在于amd64的设计理念基于x86，rax类似于取了一个QWORD eax，占用字节更大自然就会导致使用字节数更多。</p><p>但是需要注意，当rsp对应位置的值为0时，使用<code>pop rax</code>是最短的，对应的16进制为<code>\x58</code>。</p><h2 id="mov"><a href="#mov" class="headerlink" title="mov"></a>mov</h2><p>首先我们应该知道mov是汇编里的助记符，而不是二进制里真正的opcode域，不同语境下的mov（如寄存器之间数据传输方向不同）采用的操作码数值也不同，详细可查询intel得指令手册（可以在intel官网下载）。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>oreo-house of spirit</title>
     <link href="/2023/12/22/oreo-house-of-spirit/"/>
     <url>/2023/12/22/oreo-house-of-spirit/</url>
