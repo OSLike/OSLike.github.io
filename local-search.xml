@@ -8,7 +8,7 @@
     <link href="/2024/04/08/house-of-lore/"/>
     <url>/2024/04/08/house-of-lore/</url>
     
-    <content type="html"><![CDATA[<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>house of lore是一种smallbin attack，其可通过利用smallbin的bk指针以控制指定位置chunk的fd指针，从而实现分配到任意位置的chunk，进而修改任意地址的内存。假设可以满足smallbin最后一个chunk的bk指向fake chunk，并且满足<code>bck-&gt;fd != victim</code>的检测，那么就可以使fake chunk加入small bin的bk。</p><p>影响版本：低于2.31的所有版本，但在libc-2.27中检查有所改变：</p><p>​2.23中只有针对<code>bcd-&gt;fd != victim</code>，2.27中增加了对于fakechunk-&gt;fd是否为victim的检查。</p>]]></content>
+    <content type="html"><![CDATA[<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>house of lore是一种smallbin attack，其可通过利用smallbin的bk指针以控制指定位置chunk的fd指针，从而实现分配到任意位置的chunk，进而修改任意地址的内存。假设可以满足smallbin最后一个chunk的bk指向fake chunk，并且满足<code>bck-&gt;fd != victim</code>的检测，那么就可以使fake chunk加入small bin的bk。</p><p>影响版本：低于2.31的所有版本，但在libc-2.27中检查有所改变：</p><p>​2.23中只有针对<code>bcd-&gt;fd != victim</code>，2.27中增加了对于fakechunk-&gt;fd是否为victim的检查，只需再伪造fake chunk的next chunk的prev_size即可。</p>]]></content>
     
     
     <categories>
