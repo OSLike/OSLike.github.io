@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>awdp FIX纸杯</title>
+    <link href="/2024/07/22/awdp-FIX%E7%BA%B8%E6%9D%AF/"/>
+    <url>/2024/07/22/awdp-FIX%E7%BA%B8%E6%9D%AF/</url>
+    
+    <content type="html"><![CDATA[<p>awdp fix</p><p>非常建议有个keypatch，功能非常强大且有效。不过不要完全依赖keypatch。</p><h2 id="通用脚本"><a href="#通用脚本" class="headerlink" title="通用脚本"></a>通用脚本</h2><p>如果目标目录非<code>/home/ctf/</code>可以自行修改。</p><p>update.sh</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-meta">#!/bin/sh</span><br><span class="hljs-built_in">cp</span> pwn /home/ctf/pwn<br><span class="hljs-built_in">chmod</span> 777 /home/ctf/pwn<br></code></pre></td></tr></table></figure><p>如果check检查上传文件的md5，但我之前上传过相同md5文件（例如说之前环境down了，有需要修复避免一轮结束额外扣分），那么比较合适的方法就是在脚本内部的某些地方加上换行符等等。</p><h2 id="首先肯定是格式化字符串"><a href="#首先肯定是格式化字符串" class="headerlink" title="首先肯定是格式化字符串"></a>首先肯定是格式化字符串</h2><p>格式化字符串一般是最好修的，我们自己写代码时避免格式化字符串的形式无非两种：一种是<code>&quot;%s&quot;, str</code>，一种是用其他输出函数来输出，例如说<code>puts</code>。</p><p>如果dyn中有puts，那是最方便的，直接从<code>printf(str)</code>执行成<code>puts(str)</code>，也就是将<code>call printf</code>修改为<code>call puts</code>。</p><p>如果dyn中没有puts，那么就需要尝试跳转出去在一个没有使用的可写段去写<code>printf(&quot;%s&quot;, str)</code>，我们跳转的位置是从上一个函数执行结束到当前格式化字符串漏洞的<code>call printf</code>，也就是原本参数修改到执行函数的位置都是自定义的，并不是只有<code>call printf</code>才能覆写。</p><p>跳出去之后就很简单，不需要什么<code>endbr64</code>，直接写合适的寄存器控制和函数调用就行。</p><p>例如说我想写一段<code>printf(&quot;%s&quot;, str);</code>，首先把str的地址控制在某个寄存器内（例如说rax），然后找两段地址，一个先写<code>%s</code>，一个写如下汇编：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs asm">jmploc_1234; 直接jmp<br>loc_1234:; 假设这个标签为loc_1234<br>mov rsi, rax; 将rsi赋为rax即str的地址<br>lea rdi, addr_ps; %s的地址传到rdi<br>callprintf; 执行printf，不影响非格式化字符串正常执行流执行结果<br>retn; 返回<br></code></pre></td></tr></table></figure><p>keypatch会非常方便。</p><h2 id="free后未置空"><a href="#free后未置空" class="headerlink" title="free后未置空"></a>free后未置空</h2><p>一般来说后面有错误处理的话是最好的，一般checker不会管错误处理，所以直接在其他函数的错误处理上写<code>mov [rbp+ptr], 0</code>就可以了，例如说前面写了</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">movrax, [rbp+ptr]<br>movrdi, rax<br>callfree<br></code></pre></td></tr></table></figure><p>那么<code>[rbp+ptr]</code>就是需要置空的地址，而非rdi或rax寄存器。所以<code>mov [rbp+ptr], 0</code>就是有效的。</p><h2 id="溢出"><a href="#溢出" class="headerlink" title="溢出"></a>溢出</h2><p>我们需要注意多种溢出方式，一种是输入溢出，一种是复制溢出。</p><p>输入溢出就是通过输入如<code>scanf(&quot;%s&quot;, buf)</code>、<code>read(0, buf, a_large_size)</code>等形式发生的；复制溢出就是通过<code>memcpy(buf1, buf2, a_large_size)</code>、<code>for i to a_large_size: buf1[i] = buf2[i]</code>等形式发生的。</p><p>memcpy、read这种函数本身存在控制字长的就很简单，可以先试试直接size_t传个0给不给过，然后再看缓冲区长度再去试。</p><p>用scanf的话大概率改三参数函数是不够的，一般还是要跳出去再回来，rdi rsi rdx。跳出去的话可以改为read，但其实还有方法，比如说从格式化字符串上下手，找个地方写<code>&quot;%12s&quot;</code>，百分号和s之间的数字就是scanf即将从stdin读进去的长度。</p><h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>某道题目可能不会只有一个漏洞点，你要是想到了多种可能的漏洞并且修单个还是exp利用成功那就都修了。</p><p>越早修越好，因为是一直得分。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>house of lore</title>
     <link href="/2024/04/08/house-of-lore/"/>
     <url>/2024/04/08/house-of-lore/</url>

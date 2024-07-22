@@ -16,26 +16,21 @@
   <meta name="author" content="OSLike">
   <meta name="keywords" content="">
   
-    <meta name="description" content="总结house of lore是一种smallbin attack，其可通过利用smallbin的bk指针以控制指定位置chunk的fd指针，从而实现分配到任意位置的chunk，进而修改任意地址的内存。假设可以满足smallbin最后一个chunk的bk指向fake chunk，并且满足bck-&gt;fd !&#x3D; victim的检测，那么就可以使fake chunk加入small bin的bk。">
+    <meta name="description" content="awdp fix 非常建议有个keypatch，功能非常强大且有效。不过不要完全依赖keypatch。 通用脚本如果目标目录非&#x2F;home&#x2F;ctf&#x2F;可以自行修改。 update.sh 123#!&#x2F;bin&#x2F;shcp pwn &#x2F;home&#x2F;ctf&#x2F;pwnchmod 777 &#x2F;home&#x2F;ctf&#x2F;pwn  如果check检查上传文件的md5，但我之前上传过相同md5文件（例如说之前环境down了，有需要修复避">
 <meta property="og:type" content="article">
-<meta property="og:title" content="house of lore">
-<meta property="og:url" content="http://example.com/2024/04/08/house-of-lore/index.html">
+<meta property="og:title" content="awdp FIX纸杯">
+<meta property="og:url" content="http://example.com/2024/07/22/awdp-FIX%E7%BA%B8%E6%9D%AF/index.html">
 <meta property="og:site_name" content="OSLike&#39;s Blog">
-<meta property="og:description" content="总结house of lore是一种smallbin attack，其可通过利用smallbin的bk指针以控制指定位置chunk的fd指针，从而实现分配到任意位置的chunk，进而修改任意地址的内存。假设可以满足smallbin最后一个chunk的bk指向fake chunk，并且满足bck-&gt;fd !&#x3D; victim的检测，那么就可以使fake chunk加入small bin的bk。">
+<meta property="og:description" content="awdp fix 非常建议有个keypatch，功能非常强大且有效。不过不要完全依赖keypatch。 通用脚本如果目标目录非&#x2F;home&#x2F;ctf&#x2F;可以自行修改。 update.sh 123#!&#x2F;bin&#x2F;shcp pwn &#x2F;home&#x2F;ctf&#x2F;pwnchmod 777 &#x2F;home&#x2F;ctf&#x2F;pwn  如果check检查上传文件的md5，但我之前上传过相同md5文件（例如说之前环境down了，有需要修复避">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
-<meta property="article:published_time" content="2024-04-08T08:36:28.000Z">
-<meta property="article:modified_time" content="2024-04-08T12:13:35.264Z">
+<meta property="article:published_time" content="2024-07-22T04:11:12.000Z">
+<meta property="article:modified_time" content="2024-07-22T05:09:09.572Z">
 <meta property="article:author" content="OSLike">
-<meta property="article:tag" content="knowledge">
-<meta property="article:tag" content="pwn">
-<meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
   
   
   
-  <title>house of lore - OSLike&#39;s Blog</title>
+  <title>awdp FIX纸杯 - OSLike&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -223,13 +218,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://wllm1013.github.io/img/08067.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="house of lore"></span>
+            <span id="subtitle" data-typed-text="awdp FIX纸杯"></span>
           
         </div>
 
@@ -245,8 +240,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-04-08 16:36" pubdate>
-          2024年4月8日 下午
+        <time datetime="2024-07-22 12:11" pubdate>
+          2024年7月22日 中午
         </time>
       </span>
     
@@ -257,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          332 字
+          1.5k 字
         
       </span>
     
@@ -268,7 +263,7 @@
         
         
         
-          3 分钟
+          11 分钟
         
       </span>
     
@@ -324,12 +319,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">house of lore</h1>
+            <h1 style="display: none">awdp FIX纸杯</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年4月8日 晚上
+                    本文最后更新于：2024年7月22日 下午
                   
                 
               </p>
@@ -337,9 +332,31 @@
             
               <div class="markdown-body">
                 
-                <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>house of lore是一种smallbin attack，其可通过利用smallbin的bk指针以控制指定位置chunk的fd指针，从而实现分配到任意位置的chunk，进而修改任意地址的内存。假设可以满足smallbin最后一个chunk的bk指向fake chunk，并且满足<code>bck-&gt;fd != victim</code>的检测，那么就可以使fake chunk加入small bin的bk。</p>
-<p>影响版本：低于2.31的所有版本，但在libc-2.27中检查有所改变：</p>
-<p>​	2.23中只有针对<code>bcd-&gt;fd != victim</code>，2.27中增加了对于fakechunk-&gt;fd是否为victim的检查，只需再伪造fake chunk的next chunk的prev_size即可。</p>
+                <p>awdp fix</p>
+<p>非常建议有个keypatch，功能非常强大且有效。不过不要完全依赖keypatch。</p>
+<h2 id="通用脚本"><a href="#通用脚本" class="headerlink" title="通用脚本"></a>通用脚本</h2><p>如果目标目录非<code>/home/ctf/</code>可以自行修改。</p>
+<p>update.sh</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-meta">#!/bin/sh</span><br><span class="hljs-built_in">cp</span> pwn /home/ctf/pwn<br><span class="hljs-built_in">chmod</span> 777 /home/ctf/pwn<br></code></pre></td></tr></table></figure>
+
+<p>如果check检查上传文件的md5，但我之前上传过相同md5文件（例如说之前环境down了，有需要修复避免一轮结束额外扣分），那么比较合适的方法就是在脚本内部的某些地方加上换行符等等。</p>
+<h2 id="首先肯定是格式化字符串"><a href="#首先肯定是格式化字符串" class="headerlink" title="首先肯定是格式化字符串"></a>首先肯定是格式化字符串</h2><p>格式化字符串一般是最好修的，我们自己写代码时避免格式化字符串的形式无非两种：一种是<code>&quot;%s&quot;, str</code>，一种是用其他输出函数来输出，例如说<code>puts</code>。</p>
+<p>如果dyn中有puts，那是最方便的，直接从<code>printf(str)</code>执行成<code>puts(str)</code>，也就是将<code>call printf</code>修改为<code>call puts</code>。</p>
+<p>如果dyn中没有puts，那么就需要尝试跳转出去在一个没有使用的可写段去写<code>printf(&quot;%s&quot;, str)</code>，我们跳转的位置是从上一个函数执行结束到当前格式化字符串漏洞的<code>call printf</code>，也就是原本参数修改到执行函数的位置都是自定义的，并不是只有<code>call printf</code>才能覆写。</p>
+<p>跳出去之后就很简单，不需要什么<code>endbr64</code>，直接写合适的寄存器控制和函数调用就行。</p>
+<p>例如说我想写一段<code>printf(&quot;%s&quot;, str);</code>，首先把str的地址控制在某个寄存器内（例如说rax），然后找两段地址，一个先写<code>%s</code>，一个写如下汇编：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs asm">jmp		loc_1234	; 直接jmp<br>loc_1234:			; 假设这个标签为loc_1234<br>mov 	rsi, rax	; 将rsi赋为rax即str的地址<br>lea 	rdi, addr_ps; %s的地址传到rdi<br>call	printf		; 执行printf，不影响非格式化字符串正常执行流执行结果<br>retn				; 返回<br></code></pre></td></tr></table></figure>
+
+<p>keypatch会非常方便。</p>
+<h2 id="free后未置空"><a href="#free后未置空" class="headerlink" title="free后未置空"></a>free后未置空</h2><p>一般来说后面有错误处理的话是最好的，一般checker不会管错误处理，所以直接在其他函数的错误处理上写<code>mov [rbp+ptr], 0</code>就可以了，例如说前面写了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov		rax, [rbp+ptr]<br>mov		rdi, rax<br>call	free<br></code></pre></td></tr></table></figure>
+
+<p>那么<code>[rbp+ptr]</code>就是需要置空的地址，而非rdi或rax寄存器。所以<code>mov [rbp+ptr], 0</code>就是有效的。</p>
+<h2 id="溢出"><a href="#溢出" class="headerlink" title="溢出"></a>溢出</h2><p>我们需要注意多种溢出方式，一种是输入溢出，一种是复制溢出。</p>
+<p>输入溢出就是通过输入如<code>scanf(&quot;%s&quot;, buf)</code>、<code>read(0, buf, a_large_size)</code>等形式发生的；复制溢出就是通过<code>memcpy(buf1, buf2, a_large_size)</code>、<code>for i to a_large_size: buf1[i] = buf2[i]</code>等形式发生的。</p>
+<p>memcpy、read这种函数本身存在控制字长的就很简单，可以先试试直接size_t传个0给不给过，然后再看缓冲区长度再去试。</p>
+<p>用scanf的话大概率改三参数函数是不够的，一般还是要跳出去再回来，rdi rsi rdx。跳出去的话可以改为read，但其实还有方法，比如说从格式化字符串上下手，找个地方写<code>&quot;%12s&quot;</code>，百分号和s之间的数字就是scanf即将从stdin读进去的长度。</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>某道题目可能不会只有一个漏洞点，你要是想到了多种可能的漏洞并且修单个还是exp利用成功那就都修了。</p>
+<p>越早修越好，因为是一直得分。</p>
 
                 
               </div>
@@ -348,38 +365,6 @@
             <div>
               <div class="post-metas my-3">
   
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/CTFPWN/" class="category-chain-item">CTFPWN</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/knowledge/">#knowledge</a>
-      
-        <a href="/tags/pwn/">#pwn</a>
-      
-        <a href="/tags/CTF/">#CTF</a>
-      
-    </div>
   
 </div>
 
@@ -389,8 +374,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>house of lore</div>
-      <div>http://example.com/2024/04/08/house-of-lore/</div>
+      <div>awdp FIX纸杯</div>
+      <div>http://example.com/2024/07/22/awdp-FIX纸杯/</div>
     </div>
     <div class="license-meta">
       
@@ -402,7 +387,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年4月8日</div>
+          <div>2024年7月22日</div>
         </div>
       
       
@@ -434,18 +419,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/07/22/awdp-FIX%E7%BA%B8%E6%9D%AF/" title="awdp FIX纸杯">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">awdp FIX纸杯</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/03/06/tinypad-house-of-einherjar/" title="tinypad-house of einherjar">
-                        <span class="hidden-mobile">tinypad-house of einherjar</span>
+                      <a href="/2024/04/08/house-of-lore/" title="house of lore">
+                        <span class="hidden-mobile">house of lore</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
