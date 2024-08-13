@@ -471,7 +471,7 @@
       
       <a class="index-excerpt " href="/2024/07/25/CVE-2018-5767-Tenda-AC15-armv7%E8%B7%AF%E7%94%B1%E5%99%A8%E6%A0%88%E6%BA%A2%E5%87%BA%E5%A4%8D%E7%8E%B0/" target="_self">
         <div>
-          
+          保护绕过cp $(which qemu-arm-static) . 尝试利用qemu执行httpd，有见到WeLoveLinux字样，ida直接定位到对应位置，其实就是start中_uClibc_main中的r0参数，即sub_2CEA8，但没有继续执行，调试发现称没有网络导致一直sleep(1)，发现因为check_network一直在尝试访问br0网络，跳过循环的方式就是，当尝试BGT时，会等
         </div>
       </a>
 
