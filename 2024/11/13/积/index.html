@@ -16,21 +16,21 @@
   <meta name="author" content="OSLike">
   <meta name="keywords" content="">
   
-    <meta name="description" content="uhttpd+LuCI前端，80端口由uhttpd监听。 uhttpd的配置文件通常位于&#x2F;etc&#x2F;config&#x2F;uhttp，uhttpd一般位于&#x2F;usr&#x2F;sbin&#x2F;uhttpd。 借用winmt的脚本逆miwifi_lua 123456789import os res &#x3D; os.popen(&quot;find .&#x2F; -name *.lua&quot;).readlines() for i in">
+    <meta name="description" content="$\int k\mathrm{d}x&#x3D;kx+C$	$\int x^\mu\mathrm{d}x&#x3D;\frac{1}{\mu+1}x^{\mu+1}+C$	$\int\frac{\mathrm{d}x}{x}&#x3D;\ln\left|x\right|+C$ $\int\frac{\mathrm{d}x}{1+x^2}&#x3D;\arctan x+C或-\mathrm{arcc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="miwifi AX3000T 1.0.64尝试">
-<meta property="og:url" content="http://example.com/2024/08/16/miwifi-AX3000T-1-0-64%E5%B0%9D%E8%AF%95/index.html">
+<meta property="og:title" content="积">
+<meta property="og:url" content="http://example.com/2024/11/13/%E7%A7%AF/index.html">
 <meta property="og:site_name" content="OSLike&#39;s Blog">
-<meta property="og:description" content="uhttpd+LuCI前端，80端口由uhttpd监听。 uhttpd的配置文件通常位于&#x2F;etc&#x2F;config&#x2F;uhttp，uhttpd一般位于&#x2F;usr&#x2F;sbin&#x2F;uhttpd。 借用winmt的脚本逆miwifi_lua 123456789import os res &#x3D; os.popen(&quot;find .&#x2F; -name *.lua&quot;).readlines() for i in">
+<meta property="og:description" content="$\int k\mathrm{d}x&#x3D;kx+C$	$\int x^\mu\mathrm{d}x&#x3D;\frac{1}{\mu+1}x^{\mu+1}+C$	$\int\frac{\mathrm{d}x}{x}&#x3D;\ln\left|x\right|+C$ $\int\frac{\mathrm{d}x}{1+x^2}&#x3D;\arctan x+C或-\mathrm{arcc">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-08-16T06:32:15.000Z">
-<meta property="article:modified_time" content="2024-08-16T07:36:15.280Z">
+<meta property="article:published_time" content="2024-11-13T08:36:00.000Z">
+<meta property="article:modified_time" content="2024-11-13T09:23:20.954Z">
 <meta property="article:author" content="OSLike">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>miwifi AX3000T 1.0.64尝试 - OSLike&#39;s Blog</title>
+  <title>积 - OSLike&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +224,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="miwifi AX3000T 1.0.64尝试"></span>
+            <span id="subtitle" data-typed-text="积"></span>
           
         </div>
 
@@ -240,8 +240,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-08-16 14:32" pubdate>
-          2024年8月16日 下午
+        <time datetime="2024-11-13 16:36" pubdate>
+          2024年11月13日 下午
         </time>
       </span>
     
@@ -252,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          430 字
+          1.4k 字
         
       </span>
     
@@ -263,7 +263,7 @@
         
         
         
-          4 分钟
+          11 分钟
         
       </span>
     
@@ -319,12 +319,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">miwifi AX3000T 1.0.64尝试</h1>
+            <h1 style="display: none">积</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年8月16日 下午
+                    本文最后更新于：2024年11月13日 下午
                   
                 
               </p>
@@ -332,12 +332,20 @@
             
               <div class="markdown-body">
                 
-                <p>uhttpd+LuCI前端，80端口由uhttpd监听。</p>
-<p>uhttpd的配置文件通常位于<code>/etc/config/uhttp</code>，uhttpd一般位于<code>/usr/sbin/uhttpd</code>。</p>
-<p>借用winmt的脚本逆miwifi_lua</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br> <br>res = os.popen(<span class="hljs-string">&quot;find ./ -name *.lua&quot;</span>).readlines()<br> <br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(res)) :<br>    path = res[i].strip(<span class="hljs-string">&quot;\n&quot;</span>)<br>    cmd = <span class="hljs-string">&quot;java -jar ./unluac.jar &quot;</span> + path + <span class="hljs-string">&quot; &gt; &quot;</span> + path + <span class="hljs-string">&quot;.dis&quot;</span><br>    <span class="hljs-built_in">print</span>(cmd)<br>    os.system(cmd)<br></code></pre></td></tr></table></figure>
-
-<p>因为miwifi对lua解释器有做改动，直接用<a target="_blank" rel="noopener" href="https://github.com/NyaMisty/unluac_miwifi">unluac_miwifi</a>项目，编译可以用unluac的编译方式，把Manifest.mf和build.sh文件复制进来就可以编译。</p>
+                <p>$\int k\mathrm{d}x&#x3D;kx+C$	$\int x^\mu\mathrm{d}x&#x3D;\frac{1}{\mu+1}x^{\mu+1}+C$	$\int\frac{\mathrm{d}x}{x}&#x3D;\ln\left|x\right|+C$</p>
+<p>$\int\frac{\mathrm{d}x}{1+x^2}&#x3D;\arctan x+C或-\mathrm{arccot}x+C$ </p>
+<p>$\int\frac{\mathrm{d}x}{\sqrt{1-x^2}}&#x3D;\arcsin x+C或-\arccos x+C$</p>
+<p>$\int\cos x\mathrm{d}x&#x3D;\sin x+C$	$\int\sin x\mathrm{d}x&#x3D;-\cos x+C$ </p>
+<p>$\int\frac{\mathrm{d}x}{\cos^2x}&#x3D;\int\sec^2x\mathrm{d}x&#x3D;\tan x+C$</p>
+<p>$\int\frac{\mathrm{d}x}{\sin^2x}&#x3D;\int\csc^2x\mathrm{d}x&#x3D;-\cot x+C$</p>
+<p>$\int\sec x\tan x\mathrm{d}x&#x3D;\sec x+C$	$\int\csc x\cot x\mathrm{d}x&#x3D;-\csc x+C$</p>
+<p>$e^x\mathrm{d}x&#x3D;e^x+C$	$\int a^x\mathrm{d}x&#x3D;\frac{a^x}{\ln a}+C$</p>
+<p>$\int\mathrm{sh}x\mathrm{d}x&#x3D;\mathrm{ch}x+C$	$\int\mathrm{ch}x\mathrm{d}x&#x3D;\mathrm{sh}x+C$<br>$(\mathrm{sh}x&#x3D;\frac{e^x-e^{-x}}{2},\mathrm{ch}x&#x3D;\frac{e^x+e^{-x}}{2})$</p>
+<p>$\int\tan x\mathrm{d}x&#x3D;-\ln\left|\cos x\right|+C$	$\int\cot x\mathrm{d}x&#x3D;\ln\left|\sin x\right|+C$</p>
+<p>$\int\sec x\mathrm{d}x&#x3D;\ln\left|\sec x+\tan x\right|+C$	$\int\csc x\mathrm{d}x&#x3D;\ln\left|\csc x-\cot x\right|+C$</p>
+<p>$\int\frac{1}{a^2+x^2}\mathrm{d}x&#x3D;\frac{1}{a}\arctan\frac{x}{a}+C$	$\int\frac{1}{x^2-a^2}\mathrm{d}x&#x3D;\frac{1}{2a}\ln\left|\frac{x-a}{x+a}\right|+C$</p>
+<p>$\int\frac{1}{\sqrt{x^2+a^2}}\mathrm{d}x&#x3D;\ln(x+\sqrt{x^2+a^2})+C$ $\int\frac{1}{\sqrt{x^2-a^2}}\mathrm{d}x&#x3D;\ln\left|x+\sqrt{x^2-a^2}\right|+C$</p>
+<p>$\int\frac{1}{\sqrt{a^2-x^2}}\mathrm{d}x&#x3D;\arcsin\frac{x}{a}+C$ </p>
 
                 
               </div>
@@ -355,8 +363,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>miwifi AX3000T 1.0.64尝试</div>
-      <div>http://example.com/2024/08/16/miwifi-AX3000T-1-0-64尝试/</div>
+      <div>积</div>
+      <div>http://example.com/2024/11/13/积/</div>
     </div>
     <div class="license-meta">
       
@@ -368,7 +376,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年8月16日</div>
+          <div>2024年11月13日</div>
         </div>
       
       
@@ -400,18 +408,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/13/%E7%A7%AF/" title="积">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">积</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/08/14/CVE-2021-43118-Vigor3900%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="CVE-2021-43118 Vigor3900命令注入漏洞复现">
-                        <span class="hidden-mobile">CVE-2021-43118 Vigor3900命令注入漏洞复现</span>
+                      <a href="/2024/08/16/miwifi-AX3000T-1-0-64%E5%B0%9D%E8%AF%95/" title="miwifi AX3000T 1.0.64尝试">
+                        <span class="hidden-mobile">miwifi AX3000T 1.0.64尝试</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
