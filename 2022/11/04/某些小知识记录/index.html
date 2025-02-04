@@ -23,15 +23,15 @@
 <meta property="og:site_name" content="OSLike&#39;s Blog">
 <meta property="og:description" content="利用checksec可以猜测题目大致考的方向整理没有NX，自带系统命令，直接返回地址，ret2text 没有NX，找不到system()，有可执行段，可写入shellcode，ret2shellcode （mprotected(,,7)有对某段地址提高权限的能力，可以写入shellcode） 可以有NX，找得到system()的plt的绝对地址，没有binsh，ret2libc2 有NX，利用RO">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
+<meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.github.io%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
 <meta property="article:published_time" content="2022-11-04T07:55:05.000Z">
-<meta property="article:modified_time" content="2023-10-29T12:29:22.304Z">
+<meta property="article:modified_time" content="2025-02-04T06:30:58.822Z">
 <meta property="article:author" content="OSLike">
 <meta property="article:tag" content="knowledge">
 <meta property="article:tag" content="pwn">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.com%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
+<meta name="twitter:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.github.io%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
   
   
   
@@ -329,7 +329,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年10月29日 晚上
+                    本文最后更新于：2025年2月4日 下午
                   
                 
               </p>
